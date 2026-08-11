@@ -23,12 +23,12 @@ export const personal = {
     interest:
       "Yazılıma olan ilgimi projeler geliştirerek ilerletiyorum. Kodlama bilgim başlangıç seviyesinde olsa da, yapay zekâ destekli araçları kullanarak Stajyer Takip Paneli geliştirdim ve şu anda kendi portföy web sitem üzerinde çalışıyorum.",
     technologies: [
-      "HTML",
-      "CSS",
-      "JavaScript",
+      "Next.js",
       "React",
       "TypeScript",
-      "[Teknoloji ekleyin]",
+      "Tailwind CSS",
+      "Prisma",
+      "SQLite",
     ],
     focusAreas: [
       "Web Geliştirme",

@@ -36,7 +36,7 @@ export function About() {
 
           <div className={styles.textBlock}>
             <div>
-              <h3 className={styles.subheading}>Teknolojiler</h3>
+              <h3 className={styles.subheading}>Kullandığım Teknolojiler</h3>
               <ul className={styles.techList}>
                 {about.technologies.map((tech) => (
                   <li key={tech} className={styles.techTag}>
