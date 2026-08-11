@@ -47,7 +47,7 @@ export const projects: Project[] = [
   },
   {
     id: "kisisel-portfolio",
-    name: "Kişisel Portföy Web Sitesi",
+    name: "Portföy Web Sitesi",
     description:
       "Yazılım geliştirme yolculuğumu, projelerimi ve iletişim kanallarımı sergileyen modern ve responsive kişisel portföy sitesi.",
     status: "in-progress",
