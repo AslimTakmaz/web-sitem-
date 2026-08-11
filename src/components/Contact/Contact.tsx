@@ -3,41 +3,51 @@ import { personal } from "../../data/personal";
 import { EmailIcon, GitHubIcon, LinkedInIcon } from "../icons/SocialIcons";
 import styles from "./Contact.module.css";
 
-type FormStatus = "idle" | "loading" | "success" | "error";
+type FormStatus = "idle" | "loading" | "success" | "error" | "activation";
 
 export function Contact() {
   const [status, setStatus] = useState<FormStatus>("idle");
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    const accessKey = personal.contact.web3formsAccessKey;
-    if (!accessKey) {
-      setStatus("error");
-      return;
-    }
-
     setStatus("loading");
 
     const form = event.currentTarget;
     const formData = new FormData(form);
-    formData.append("access_key", accessKey);
-    formData.append("subject", "Portföy sitesinden yeni mesaj");
-    formData.append("from_name", "Aslım Takmaz Portföy");
+    formData.append("_subject", "Portföy sitesinden yeni mesaj");
+    formData.append("_captcha", "false");
+    formData.append("_template", "table");
 
     try {
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        body: formData,
-      });
-      const result = await response.json();
+      const response = await fetch(
+        `https://formsubmit.co/ajax/${encodeURIComponent(personal.contact.email)}`,
+        {
+          method: "POST",
+          headers: { Accept: "application/json" },
+          body: formData,
+        }
+      );
 
-      if (result.success) {
+      const result = (await response.json()) as {
+        success?: boolean | string;
+        message?: string;
+      };
+
+      const isSuccess =
+        result.success === true || result.success === "true";
+
+      if (isSuccess) {
         setStatus("success");
         form.reset();
-      } else {
-        setStatus("error");
+        return;
       }
+
+      if (result.message?.toLowerCase().includes("activation")) {
+        setStatus("activation");
+        return;
+      }
+
+      setStatus("error");
     } catch {
       setStatus("error");
     }
@@ -99,6 +109,14 @@ export function Contact() {
               </p>
             )}
 
+            {status === "activation" && (
+              <p className={styles.formSuccess} role="status">
+                FormSubmit onay maili gönderildi. Gmail&apos;indeki
+                &quot;Activate Form&quot; linkine tıkla; sonrasında mesajlar
+                gelmeye başlar.
+              </p>
+            )}
+
             {status === "error" && (
               <p className={styles.formError} role="alert">
                 Mesaj gönderilemedi. Lütfen daha sonra tekrar deneyin veya
@@ -112,8 +130,8 @@ export function Contact() {
               onSubmit={handleSubmit}
             >
               <input
-                type="checkbox"
-                name="botcheck"
+                type="text"
+                name="_honey"
                 className={styles.honeypot}
                 tabIndex={-1}
                 autoComplete="off"

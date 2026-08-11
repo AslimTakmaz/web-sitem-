@@ -19,11 +19,6 @@ export const personal = {
 
   contact: {
     email: "takmazaslim096@gmail.com",
-    /**
-     * Web3Forms Access Key — https://web3forms.com
-     * E-postanı gir, gelen anahtarı buraya yapıştır.
-     */
-    web3formsAccessKey: "",
   },
 
   about: {
