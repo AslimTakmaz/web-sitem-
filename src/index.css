@@ -3,11 +3,11 @@
   color-scheme: dark;
 
   --color-bg: #09090b;
-  --color-bg-secondary: #0f0f13;
-  --color-bg-elevated: #16161c;
-  --color-card-bg: #121216;
-  --color-tag-bg: #1a1a20;
-  --color-input-bg: #0c0c10;
+  --color-bg-secondary: rgba(15, 15, 19, 0.82);
+  --color-bg-elevated: rgba(22, 22, 28, 0.88);
+  --color-card-bg: rgba(18, 18, 22, 0.85);
+  --color-tag-bg: rgba(26, 26, 32, 0.9);
+  --color-input-bg: rgba(12, 12, 16, 0.9);
   --color-border: #25252d;
   --color-border-hover: #3a3a45;
   --color-text: #f4f4f5;
@@ -16,13 +16,12 @@
   --color-accent-hover: #2563eb;
   --color-baby-blue: #89cff0;
   --color-label: #89cff0;
-  --color-navbar-bg: rgba(9, 9, 11, 0.82);
-  --color-logo-mark-bg: rgba(255, 255, 255, 0.03);
+  --color-navbar-bg: rgba(9, 9, 11, 0.75);
+  --color-logo-mark-bg: rgba(255, 255, 255, 0.05);
   --color-overlay: rgba(0, 0, 0, 0.72);
+  --color-bg-pattern-opacity: 0.42;
   --color-bg-glow:
-    radial-gradient(ellipse 90% 60% at 50% -25%, rgba(59, 130, 246, 0.14), transparent 55%),
-    radial-gradient(ellipse 50% 40% at 100% 20%, rgba(137, 207, 240, 0.07), transparent 50%),
-    radial-gradient(ellipse 40% 30% at 0% 80%, rgba(59, 130, 246, 0.05), transparent 50%);
+    radial-gradient(ellipse 90% 60% at 50% -25%, rgba(59, 130, 246, 0.1), transparent 55%);
   --shadow-card: 0 0 0 1px rgba(255, 255, 255, 0.04);
   --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.35);
   --shadow-nav: 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -34,11 +33,11 @@
   color-scheme: light;
 
   --color-bg: #f1f5f9;
-  --color-bg-secondary: #ffffff;
-  --color-bg-elevated: #ffffff;
-  --color-card-bg: #ffffff;
-  --color-tag-bg: #f8fafc;
-  --color-input-bg: #f8fafc;
+  --color-bg-secondary: rgba(255, 255, 255, 0.78);
+  --color-bg-elevated: rgba(255, 255, 255, 0.88);
+  --color-card-bg: rgba(255, 255, 255, 0.85);
+  --color-tag-bg: rgba(248, 250, 252, 0.92);
+  --color-input-bg: rgba(248, 250, 252, 0.95);
   --color-border: #e2e8f0;
   --color-border-hover: #cbd5e1;
   --color-text: #0f172a;
@@ -47,13 +46,12 @@
   --color-accent-hover: #1d4ed8;
   --color-baby-blue: #0284c7;
   --color-label: #2563eb;
-  --color-navbar-bg: rgba(255, 255, 255, 0.88);
-  --color-logo-mark-bg: rgba(241, 245, 249, 0.9);
+  --color-navbar-bg: rgba(255, 255, 255, 0.78);
+  --color-logo-mark-bg: rgba(255, 255, 255, 0.75);
   --color-overlay: rgba(15, 23, 42, 0.45);
+  --color-bg-pattern-opacity: 0.3;
   --color-bg-glow:
-    radial-gradient(ellipse 90% 60% at 50% -20%, rgba(37, 99, 235, 0.09), transparent 55%),
-    radial-gradient(ellipse 50% 40% at 100% 10%, rgba(2, 132, 199, 0.06), transparent 50%),
-    linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+    radial-gradient(ellipse 90% 60% at 50% -20%, rgba(37, 99, 235, 0.06), transparent 55%);
   --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.05), 0 4px 16px rgba(15, 23, 42, 0.04);
   --shadow-card-hover: 0 8px 28px rgba(15, 23, 42, 0.1);
   --shadow-nav: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 0 rgba(15, 23, 42, 0.04);
@@ -101,6 +99,24 @@ body::before {
   pointer-events: none;
   z-index: -1;
   transition: opacity 0.35s ease;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("/bg-pattern.png");
+  background-size: cover;
+  background-position: center right;
+  background-repeat: no-repeat;
+  opacity: var(--color-bg-pattern-opacity);
+  pointer-events: none;
+  z-index: -2;
+  transition: filter 0.35s ease, opacity 0.35s ease;
+}
+
+[data-theme="light"] body::after {
+  filter: invert(1);
 }
 
 #root {

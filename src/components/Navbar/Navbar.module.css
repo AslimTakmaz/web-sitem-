@@ -6,6 +6,7 @@
   height: var(--nav-height);
   background-color: var(--color-navbar-bg);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--color-border);
   box-shadow: var(--shadow-nav);
   z-index: 100;
