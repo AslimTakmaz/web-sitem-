@@ -1,0 +1,83 @@
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.mark {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid var(--color-baby-blue);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.mark svg {
+  width: 100%;
+  height: 100%;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.subtitle {
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-baby-blue);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.line {
+  display: block;
+  width: 100%;
+  max-width: 140px;
+  height: 1px;
+  margin-top: 0.125rem;
+  background: linear-gradient(
+    90deg,
+    var(--color-baby-blue) 0%,
+    rgba(137, 207, 240, 0.15) 100%
+  );
+}
+
+@media (max-width: 640px) {
+  .subtitle,
+  .line {
+    display: none;
+  }
+
+  .name {
+    font-size: 0.9375rem;
+  }
+
+  .mark {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (max-width: 400px) {
+  .text {
+    display: none;
+  }
+}

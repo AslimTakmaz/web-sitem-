@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { personal } from "../../data/personal";
+import { Logo } from "../Logo/Logo";
 import styles from "./Navbar.module.css";
 
 const navItems = [
@@ -38,8 +38,6 @@ export function Navbar() {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const logoText = personal.logoText;
-
   return (
     <header className={styles.navbar}>
       <div className={styles.container}>
@@ -52,7 +50,7 @@ export function Navbar() {
           }}
           aria-label="Ana sayfaya git"
         >
-          <span className={styles.logoAccent}>{logoText}</span>
+          <Logo />
         </a>
 
         <nav className={styles.navLinks} aria-label="Ana navigasyon">

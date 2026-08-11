@@ -21,14 +21,8 @@
 }
 
 .logo {
-  font-weight: 600;
-  font-size: 1rem;
-  color: var(--color-text);
-  letter-spacing: -0.02em;
-}
-
-.logoAccent {
-  color: var(--color-accent);
+  display: block;
+  text-decoration: none;
 }
 
 .navLinks {
