@@ -31,9 +31,10 @@ export const personal = {
       "[Teknoloji ekleyin]",
     ],
     focusAreas: [
-      "[Geliştirdiğiniz alan 1]",
-      "[Geliştirdiğiniz alan 2]",
-      "[Geliştirdiğiniz alan 3]",
+      "Web Geliştirme",
+      "Proje Geliştirme",
+      "Yapay Zekâ Destekli Geliştirme",
+      "UI/UX Tasarımı",
     ],
     education: {
       title: "11. Sınıf Bilişim Teknologileri Öğrencisi",
