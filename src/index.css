@@ -19,10 +19,10 @@
   --color-navbar-bg: rgba(9, 9, 11, 0.75);
   --color-logo-mark-bg: rgba(255, 255, 255, 0.05);
   --color-overlay: rgba(0, 0, 0, 0.72);
-  --color-bg-pattern-opacity: 0.55;
+  --color-bg-pattern-opacity: 1;
+  --color-bg-pattern-size: min(100%, 1024px) auto;
   --color-bg-pattern-position: center top;
-  --color-bg-glow:
-    radial-gradient(ellipse 90% 60% at 50% -25%, rgba(59, 130, 246, 0.1), transparent 55%);
+  --color-bg-glow: none;
   --shadow-card: 0 0 0 1px rgba(255, 255, 255, 0.04);
   --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.35);
   --shadow-nav: 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -50,10 +50,10 @@
   --color-navbar-bg: rgba(255, 255, 255, 0.78);
   --color-logo-mark-bg: rgba(255, 255, 255, 0.75);
   --color-overlay: rgba(15, 23, 42, 0.45);
-  --color-bg-pattern-opacity: 0.42;
+  --color-bg-pattern-opacity: 1;
+  --color-bg-pattern-size: min(100%, 1024px) auto;
   --color-bg-pattern-position: center top;
-  --color-bg-glow:
-    radial-gradient(ellipse 90% 60% at 50% -20%, rgba(37, 99, 235, 0.06), transparent 55%);
+  --color-bg-glow: none;
   --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.05), 0 4px 16px rgba(15, 23, 42, 0.04);
   --shadow-card-hover: 0 8px 28px rgba(15, 23, 42, 0.1);
   --shadow-nav: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 0 rgba(15, 23, 42, 0.04);
@@ -107,16 +107,14 @@ body::after {
   content: "";
   position: fixed;
   inset: 0;
-  background-image: url("/bg-pattern.webp"), url("/bg-pattern.png");
-  background-size: cover;
+  background-image: url("/bg-pattern.png"), url("/bg-pattern.webp");
+  background-size: var(--color-bg-pattern-size);
   background-position: var(--color-bg-pattern-position);
   background-repeat: no-repeat;
   opacity: var(--color-bg-pattern-opacity);
   pointer-events: none;
   z-index: -2;
-  transition: filter 0.35s ease, opacity 0.35s ease;
-  transform: translateZ(0);
-  backface-visibility: hidden;
+  transition: filter 0.35s ease;
 }
 
 [data-theme="light"] body::after {
