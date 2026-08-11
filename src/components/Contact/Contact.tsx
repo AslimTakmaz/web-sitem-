@@ -1,8 +1,48 @@
+import { useState, type FormEvent } from "react";
 import { personal } from "../../data/personal";
 import { EmailIcon, GitHubIcon, LinkedInIcon } from "../icons/SocialIcons";
 import styles from "./Contact.module.css";
 
+type FormStatus = "idle" | "loading" | "success" | "error";
+
 export function Contact() {
+  const [status, setStatus] = useState<FormStatus>("idle");
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const accessKey = personal.contact.web3formsAccessKey;
+    if (!accessKey) {
+      setStatus("error");
+      return;
+    }
+
+    setStatus("loading");
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    formData.append("access_key", accessKey);
+    formData.append("subject", "Portföy sitesinden yeni mesaj");
+    formData.append("from_name", "Aslım Takmaz Portföy");
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+      });
+      const result = await response.json();
+
+      if (result.success) {
+        setStatus("success");
+        form.reset();
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  };
+
   return (
     <section id="contact" className={styles.section} aria-label="İletişim">
       <div className={styles.container}>
@@ -50,15 +90,36 @@ export function Contact() {
           <div className={styles.formBlock}>
             <h3 className={styles.formTitle}>Mesaj Gönder</h3>
             <p className={styles.formNote}>
-              Form altyapısı henüz yapılandırılmadı. Backend eklendiğinde
-              aktif hale getirilecektir.
+              Formu doldurun, mesajınız doğrudan e-posta adresime iletilir.
             </p>
+
+            {status === "success" && (
+              <p className={styles.formSuccess} role="status">
+                Mesajınız gönderildi. En kısa sürede dönüş yapacağım.
+              </p>
+            )}
+
+            {status === "error" && (
+              <p className={styles.formError} role="alert">
+                Mesaj gönderilemedi. Lütfen daha sonra tekrar deneyin veya
+                e-posta ile ulaşın.
+              </p>
+            )}
 
             <form
               className={styles.form}
               aria-label="İletişim formu"
-              onSubmit={(e) => e.preventDefault()}
+              onSubmit={handleSubmit}
             >
+              <input
+                type="checkbox"
+                name="botcheck"
+                className={styles.honeypot}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+              />
+
               <div className={styles.fieldGroup}>
                 <label htmlFor="contact-name" className={styles.label}>
                   İsim
@@ -69,8 +130,9 @@ export function Contact() {
                   name="name"
                   className={styles.input}
                   placeholder="Adınız Soyadınız"
-                  disabled
-                  aria-disabled="true"
+                  required
+                  autoComplete="name"
+                  disabled={status === "loading"}
                 />
               </div>
 
@@ -84,8 +146,9 @@ export function Contact() {
                   name="email"
                   className={styles.input}
                   placeholder="ornek@email.com"
-                  disabled
-                  aria-disabled="true"
+                  required
+                  autoComplete="email"
+                  disabled={status === "loading"}
                 />
               </div>
 
@@ -98,19 +161,18 @@ export function Contact() {
                   name="message"
                   className={styles.textarea}
                   placeholder="Mesajınızı yazın..."
-                  disabled
-                  aria-disabled="true"
+                  required
+                  minLength={10}
+                  disabled={status === "loading"}
                 />
               </div>
 
               <button
                 type="submit"
                 className={styles.submitBtn}
-                disabled
-                aria-disabled="true"
-                title="Form henüz yapılandırılmadı"
+                disabled={status === "loading"}
               >
-                Gönder (Yakında)
+                {status === "loading" ? "Gönderiliyor..." : "Gönder"}
               </button>
             </form>
           </div>
