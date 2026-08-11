@@ -35,6 +35,11 @@ export const personal = {
       "[Geliştirdiğiniz alan 2]",
       "[Geliştirdiğiniz alan 3]",
     ],
-    education: "[Eğitim bilgilerinizi buraya ekleyin]",
+    education: {
+      title: "11. Sınıf Bilişim Teknologileri Öğrencisi",
+      period: "2023 – Devam ediyor",
+      description:
+        "Bilişim ve yazılım alanında kendimi geliştiriyor, öğrendiklerimi gerçek projelere dönüştürüyorum. Web geliştirme, proje geliştirme ve yapay zekâ destekli araçlar üzerine çalışmalar yapıyorum.",
+    },
   },
 } as const;

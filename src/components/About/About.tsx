@@ -24,7 +24,13 @@ export function About() {
             </div>
             <div>
               <h3 className={styles.subheading}>Eğitim</h3>
-              <div className={styles.education}>{about.education}</div>
+              <div className={styles.education}>
+                <p className={styles.educationTitle}>{about.education.title}</p>
+                <p className={styles.educationPeriod}>{about.education.period}</p>
+                <p className={styles.educationDescription}>
+                  {about.education.description}
+                </p>
+              </div>
             </div>
           </div>
 
