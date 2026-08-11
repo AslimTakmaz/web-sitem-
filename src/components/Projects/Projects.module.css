@@ -52,11 +52,41 @@
   transform: translateY(-2px);
 }
 
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
 .cardTitle {
   font-size: 1.125rem;
   font-weight: 600;
-  margin-bottom: 0.75rem;
   letter-spacing: -0.01em;
+}
+
+.statusBadge {
+  flex-shrink: 0;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.statusInProgress {
+  color: #fbbf24;
+  background-color: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.25);
+}
+
+.statusCompleted {
+  color: #4ade80;
+  background-color: rgba(74, 222, 128, 0.1);
+  border: 1px solid rgba(74, 222, 128, 0.25);
 }
 
 .cardDescription {
@@ -170,6 +200,13 @@
   justify-content: space-between;
   padding: 1.5rem 1.5rem 0;
   gap: 1rem;
+}
+
+.modalTitleRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.625rem;
 }
 
 .modalTitle {

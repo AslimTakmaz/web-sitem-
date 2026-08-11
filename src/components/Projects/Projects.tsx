@@ -4,6 +4,23 @@ import { projects } from "../../data/projects";
 import { CloseIcon, ExternalLinkIcon } from "../icons/SocialIcons";
 import styles from "./Projects.module.css";
 
+const statusLabels: Record<NonNullable<Project["status"]>, string> = {
+  "in-progress": "Devam ediyor",
+  completed: "Tamamlandı",
+};
+
+function ProjectStatusBadge({ status }: { status: NonNullable<Project["status"]> }) {
+  return (
+    <span
+      className={`${styles.statusBadge} ${
+        status === "in-progress" ? styles.statusInProgress : styles.statusCompleted
+      }`}
+    >
+      {statusLabels[status]}
+    </span>
+  );
+}
+
 function ProjectModal({
   project,
   onClose,
@@ -33,9 +50,12 @@ function ProjectModal({
     >
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
-          <h3 id="modal-title" className={styles.modalTitle}>
-            {project.name}
-          </h3>
+          <div className={styles.modalTitleRow}>
+            <h3 id="modal-title" className={styles.modalTitle}>
+              {project.name}
+            </h3>
+            {project.status && <ProjectStatusBadge status={project.status} />}
+          </div>
           <button
             type="button"
             className={styles.closeBtn}
@@ -94,7 +114,10 @@ function ProjectCard({ project }: { project: Project }) {
   return (
     <>
       <article className={styles.card}>
-        <h3 className={styles.cardTitle}>{project.name}</h3>
+        <div className={styles.cardHeader}>
+          <h3 className={styles.cardTitle}>{project.name}</h3>
+          {project.status && <ProjectStatusBadge status={project.status} />}
+        </div>
         <p className={styles.cardDescription}>{project.description}</p>
 
         <ul className={styles.techList}>

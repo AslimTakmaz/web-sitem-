@@ -3,12 +3,15 @@
  * Yeni proje eklemek için projects dizisine yeni bir obje eklemeniz yeterli.
  */
 
+import { personal } from "./personal";
+
 export interface Project {
   id: string;
   name: string;
   description: string;
   technologies: string[];
   features: string[];
+  status?: "completed" | "in-progress";
   links: {
     github?: string;
     demo?: string;
@@ -40,6 +43,26 @@ export const projects: Project[] = [
     links: {
       github: "https://github.com/kullaniciadi/stajyer-takip-paneli",
       demo: "#",
+    },
+  },
+  {
+    id: "kisisel-portfolio",
+    name: "Kişisel Portföy Web Sitesi",
+    description:
+      "Yazılım geliştirme yolculuğumu, projelerimi ve iletişim kanallarımı sergileyen modern ve responsive kişisel portföy sitesi.",
+    status: "in-progress",
+    technologies: ["React", "TypeScript", "Vite", "CSS Modules"],
+    features: [
+      "Koyu / açık tema",
+      "Responsive tasarım",
+      "SEO ve Google Search Console",
+      "Proje vitrin alanı",
+      "İletişim bölümü",
+      "Vercel deploy",
+    ],
+    links: {
+      github: "https://github.com/AslimTakmaz/web-sitem-",
+      demo: personal.siteUrl,
     },
   },
 ];
