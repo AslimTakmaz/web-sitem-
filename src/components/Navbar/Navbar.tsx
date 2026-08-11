@@ -38,12 +38,7 @@ export function Navbar() {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const initials = personal.name
-    .split(" ")
-    .map((word) => word[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+  const logoText = personal.logoText;
 
   return (
     <header className={styles.navbar}>
@@ -57,7 +52,7 @@ export function Navbar() {
           }}
           aria-label="Ana sayfaya git"
         >
-          <span className={styles.logoAccent}>{initials}</span>
+          <span className={styles.logoAccent}>{logoText}</span>
         </a>
 
         <nav className={styles.navLinks} aria-label="Ana navigasyon">

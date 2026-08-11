@@ -5,6 +5,7 @@
 
 export const personal = {
   name: "Aslım Takmaz",
+  logoText: "Takmaz",
   title: "Software Development Intern",
   tagline:
     "Modern web teknolojileri kullanarak kullanıcı odaklı web uygulamaları geliştiriyorum.",
