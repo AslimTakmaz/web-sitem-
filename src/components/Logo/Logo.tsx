@@ -9,7 +9,7 @@ export function Logo() {
           <text
             x="7"
             y="28"
-            fill="#fafafa"
+            className={styles.letterA}
             fontFamily="Inter, system-ui, sans-serif"
             fontSize="22"
             fontWeight="300"
@@ -19,7 +19,7 @@ export function Logo() {
           <text
             x="19"
             y="28"
-            fill="#89cff0"
+            className={styles.letterT}
             fontFamily="Inter, system-ui, sans-serif"
             fontSize="24"
             fontWeight="700"

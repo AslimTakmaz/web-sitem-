@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Logo } from "../Logo/Logo";
+import { ThemeToggle } from "../ThemeToggle/ThemeToggle";
 import styles from "./Navbar.module.css";
 
 const navItems = [
@@ -53,21 +54,24 @@ export function Navbar() {
           <Logo />
         </a>
 
-        <nav className={styles.navLinks} aria-label="Ana navigasyon">
-          {navItems.map((item) => (
-            <a
-              key={item.id}
-              href={`#${item.id}`}
-              className={`${styles.navLink} ${activeSection === item.id ? styles.navLinkActive : ""}`}
-              onClick={(e) => {
-                e.preventDefault();
-                handleNavClick(item.id);
-              }}
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
+        <div className={styles.navRight}>
+          <nav className={styles.navLinks} aria-label="Ana navigasyon">
+            {navItems.map((item) => (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                className={`${styles.navLink} ${activeSection === item.id ? styles.navLinkActive : ""}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavClick(item.id);
+                }}
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+          <ThemeToggle />
+        </div>
 
         <button
           type="button"
