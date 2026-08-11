@@ -42,7 +42,10 @@
   transition: color var(--transition);
 }
 
-.navLink:hover,
+.navLink:hover {
+  color: var(--color-baby-blue);
+}
+
 .navLinkActive {
   color: var(--color-text);
 }
@@ -113,7 +116,10 @@
     border-bottom: none;
   }
 
-  .mobileLink:hover,
+  .mobileLink:hover {
+    color: var(--color-baby-blue);
+  }
+
   .mobileLinkActive {
     color: var(--color-text);
   }
