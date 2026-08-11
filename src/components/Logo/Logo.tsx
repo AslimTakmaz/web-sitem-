@@ -30,7 +30,6 @@ export function Logo() {
       </div>
 
       <div className={styles.text}>
-        <span className={styles.name}>{personal.name}</span>
         <span className={styles.subtitle}>{personal.logoSubtitle}</span>
         <span className={styles.line} aria-hidden="true" />
       </div>
