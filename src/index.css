@@ -105,7 +105,7 @@ body::after {
   content: "";
   position: fixed;
   inset: 0;
-  background-image: url("/bg-pattern.svg");
+  background-image: url("/bg-pattern.webp"), url("/bg-pattern.png");
   background-size: cover;
   background-position: center right;
   background-repeat: no-repeat;
