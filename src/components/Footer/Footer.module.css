@@ -1,6 +1,8 @@
 .footer {
   padding: 2rem 0;
   border-top: 1px solid var(--color-border);
+  background-color: var(--color-bg-secondary);
+  transition: var(--theme-transition);
 }
 
 .container {
@@ -39,7 +41,7 @@
 }
 
 .link:hover {
-  color: var(--color-text);
+  color: var(--color-baby-blue);
 }
 
 .link svg {

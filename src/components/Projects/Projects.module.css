@@ -1,5 +1,6 @@
 .section {
   padding: 6rem 0;
+  transition: var(--theme-transition);
 }
 
 .container {
@@ -14,7 +15,7 @@
 
 .sectionLabel {
   font-size: 0.8125rem;
-  color: var(--color-accent);
+  color: var(--color-label);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -37,14 +38,18 @@
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
-  background-color: var(--color-bg-secondary);
+  background-color: var(--color-card-bg);
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  transition: border-color var(--transition);
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--transition), box-shadow var(--transition),
+    transform var(--transition);
 }
 
 .card:hover {
-  border-color: #3f3f46;
+  border-color: var(--color-border-hover);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
 }
 
 .cardTitle {
@@ -72,10 +77,11 @@
 .techTag {
   padding: 0.25rem 0.625rem;
   font-size: 0.75rem;
-  background-color: var(--color-bg-elevated);
+  background-color: var(--color-tag-bg);
   border: 1px solid var(--color-border);
   border-radius: 4px;
   color: var(--color-text-muted);
+  transition: var(--theme-transition);
 }
 
 .actions {
@@ -147,9 +153,10 @@
 }
 
 .modal {
-  background-color: var(--color-bg-secondary);
+  background-color: var(--color-bg-elevated);
   border: 1px solid var(--color-border);
   border-radius: 10px;
+  box-shadow: var(--shadow-card-hover);
   max-width: 560px;
   width: 100%;
   max-height: 85vh;
@@ -219,7 +226,7 @@
 .featureItem {
   padding: 0.625rem 0.75rem;
   font-size: 0.8125rem;
-  background-color: var(--color-bg-elevated);
+  background-color: var(--color-tag-bg);
   border: 1px solid var(--color-border);
   border-radius: 5px;
   color: var(--color-text-muted);

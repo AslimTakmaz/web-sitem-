@@ -19,7 +19,7 @@
 
 .greeting {
   font-size: 0.875rem;
-  color: var(--color-accent);
+  color: var(--color-label);
   font-weight: 500;
   margin-bottom: 0.75rem;
   letter-spacing: 0.05em;

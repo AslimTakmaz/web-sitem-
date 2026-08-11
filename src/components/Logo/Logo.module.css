@@ -14,6 +14,8 @@
   align-items: center;
   justify-content: center;
   background-color: var(--color-logo-mark-bg);
+  box-shadow: var(--shadow-elevated);
+  transition: var(--theme-transition);
 }
 
 .letterA {
@@ -55,7 +57,7 @@
   background: linear-gradient(
     90deg,
     var(--color-baby-blue) 0%,
-    rgba(137, 207, 240, 0.15) 100%
+    var(--gradient-line-end) 100%
   );
 }
 
