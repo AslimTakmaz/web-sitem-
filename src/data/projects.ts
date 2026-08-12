@@ -29,7 +29,6 @@ export const projects: Project[] = [
       "TypeScript",
       "Node.js",
       "PostgreSQL",
-      "[Teknoloji ekleyin]",
     ],
     features: [
       "Kullanıcı giriş sistemi",
