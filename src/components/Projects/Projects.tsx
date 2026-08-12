@@ -136,17 +136,6 @@ function ProjectCard({ project }: { project: Project }) {
           >
             Detayları Gör
           </button>
-          {project.links.github && (
-            <a
-              href={project.links.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.btnSecondary}
-            >
-              <ExternalLinkIcon />
-              GitHub
-            </a>
-          )}
           {hasDemo ? (
             <a
               href={project.links.demo}
