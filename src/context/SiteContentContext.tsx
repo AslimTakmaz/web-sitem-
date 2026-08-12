@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { defaultContent } from "../data/defaultContent";
+import { normalizeContent } from "../data/normalizeContent";
 import type { SiteContent } from "../types/siteContent";
 
 interface SiteContentContextValue {
@@ -59,7 +60,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     try {
       const response = await fetch("/api/content");
       if (response.ok) {
-        const data = (await response.json()) as SiteContent;
+        const data = normalizeContent((await response.json()) as SiteContent);
         setContent(data);
         applyTheme(data.theme);
         setLoading(false);
@@ -72,7 +73,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     try {
       const fallback = await fetch("/site-content.json");
       if (fallback.ok) {
-        const data = (await fallback.json()) as SiteContent;
+        const data = normalizeContent((await fallback.json()) as SiteContent);
         setContent(data);
         applyTheme(data.theme);
       } else {

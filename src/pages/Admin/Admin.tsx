@@ -2,7 +2,8 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { useSiteContent } from "../../context/SiteContentContext";
 import { defaultContent } from "../../data/defaultContent";
-import type { Project, SiteContent, ThemePalette } from "../../types/siteContent";
+import { normalizeContent } from "../../data/normalizeContent";
+import type { Project, SiteContent, ThemePalette, ContentField } from "../../types/siteContent";
 import styles from "./Admin.module.css";
 
 const TOKEN_KEY = "portfolio-admin-token";
@@ -38,6 +39,93 @@ function ColorField({
         />
       </div>
     </label>
+  );
+}
+
+function ExtraFieldsEditor({
+  title,
+  hint,
+  fields,
+  multiline = false,
+  onChange,
+}: {
+  title: string;
+  hint: string;
+  fields: ContentField[];
+  multiline?: boolean;
+  onChange: (fields: ContentField[]) => void;
+}) {
+  const addField = () => {
+    onChange([
+      ...fields,
+      { id: `field-${Date.now()}`, label: "Yeni Alan", value: "" },
+    ]);
+  };
+
+  const updateField = (id: string, patch: Partial<ContentField>) => {
+    onChange(fields.map((field) => (field.id === id ? { ...field, ...patch } : field)));
+  };
+
+  const removeField = (id: string) => {
+    onChange(fields.filter((field) => field.id !== id));
+  };
+
+  return (
+    <div className={styles.extrasSection}>
+      <div className={styles.extrasHeader}>
+        <div>
+          <h3 className={styles.extrasTitle}>{title}</h3>
+          <p className={styles.extrasHint}>{hint}</p>
+        </div>
+        <button type="button" className={styles.secondaryBtn} onClick={addField}>
+          + Ekle
+        </button>
+      </div>
+
+      {fields.length === 0 && (
+        <p className={styles.extrasEmpty}>Henüz ek alan yok. Ekle butonuyla yeni alan oluşturun.</p>
+      )}
+
+      {fields.map((field) => (
+        <div key={field.id} className={styles.extraCard}>
+          <div className={styles.extraCardHeader}>
+            <span className={styles.extraCardLabel}>Özel Alan</span>
+            <button type="button" className={styles.dangerBtn} onClick={() => removeField(field.id)}>
+              Sil
+            </button>
+          </div>
+          <div className={styles.grid}>
+            <label className={styles.field}>
+              <span>Başlık</span>
+              <input
+                className={styles.input}
+                value={field.label}
+                onChange={(e) => updateField(field.id, { label: e.target.value })}
+                placeholder={multiline ? "Bölüm başlığı" : "Instagram, YouTube..."}
+              />
+            </label>
+            <label className={`${styles.field} ${multiline ? styles.fullWidth : ""}`}>
+              <span>{multiline ? "İçerik" : "Değer / Link"}</span>
+              {multiline ? (
+                <textarea
+                  className={styles.textarea}
+                  value={field.value}
+                  onChange={(e) => updateField(field.id, { value: e.target.value })}
+                  placeholder="Bu bölümde görünecek metin"
+                />
+              ) : (
+                <input
+                  className={styles.input}
+                  value={field.value}
+                  onChange={(e) => updateField(field.id, { value: e.target.value })}
+                  placeholder="https://instagram.com/..."
+                />
+              )}
+            </label>
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -93,7 +181,7 @@ export function AdminPage() {
         if (!res.ok) throw new Error("Yetkisiz");
         return res.json() as Promise<SiteContent>;
       })
-      .then(setContent)
+      .then((data) => setContent(normalizeContent(data)))
       .catch(() => {
         sessionStorage.removeItem(TOKEN_KEY);
         setToken(null);
@@ -372,6 +460,18 @@ export function AdminPage() {
                 }
               />
             </label>
+
+            <ExtraFieldsEditor
+              title="Ek Alanlar"
+              hint="Instagram, YouTube gibi sosyal medya veya ek iletişim bilgileri ekleyin."
+              fields={content.personal.generalExtras}
+              onChange={(generalExtras) =>
+                setContent((prev) => ({
+                  ...prev,
+                  personal: { ...prev.personal, generalExtras },
+                }))
+              }
+            />
           </div>
         )}
 
@@ -519,6 +619,24 @@ export function AdminPage() {
                 }
               />
             </label>
+
+            <div className={styles.fullWidth}>
+              <ExtraFieldsEditor
+                title="Ek Bölümler"
+                hint="Hakkımda sayfasına eklemek istediğiniz yeni başlık ve içerikleri oluşturun."
+                fields={content.personal.about.extras}
+                multiline
+                onChange={(extras) =>
+                  setContent((prev) => ({
+                    ...prev,
+                    personal: {
+                      ...prev.personal,
+                      about: { ...prev.personal.about, extras },
+                    },
+                  }))
+                }
+              />
+            </div>
           </div>
         )}
 

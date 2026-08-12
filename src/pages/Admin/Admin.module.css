@@ -378,6 +378,65 @@
   cursor: pointer;
 }
 
+.extrasSection {
+  grid-column: 1 / -1;
+  margin-top: 0.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.extrasHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.extrasTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.extrasHint {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.extrasEmpty {
+  padding: 1rem;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  background: var(--color-bg-elevated);
+  border: 1px dashed var(--color-border);
+  border-radius: 10px;
+}
+
+.extraCard {
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+
+.extraCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.875rem;
+}
+
+.extraCardLabel {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 @media (max-width: 720px) {
   .sidebar {
     width: 200px;

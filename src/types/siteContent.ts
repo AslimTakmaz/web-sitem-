@@ -1,3 +1,9 @@
+export interface ContentField {
+  id: string;
+  label: string;
+  value: string;
+}
+
 export interface Project {
   id: string;
   name: string;
@@ -30,6 +36,7 @@ export interface PersonalData {
   contact: {
     email: string;
   };
+  generalExtras: ContentField[];
   about: {
     bio: string;
     interest: string;
@@ -40,6 +47,7 @@ export interface PersonalData {
       period: string;
       description: string;
     };
+    extras: ContentField[];
   };
 }
 

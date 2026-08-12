@@ -15,6 +15,7 @@ export const defaultContent: SiteContent = {
     contact: {
       email: "takmazaslim096@gmail.com",
     },
+    generalExtras: [],
     about: {
       bio: "Teknoloji dünyasına Software Development Intern olarak adım atan ve sürekli öğrenmeye odaklanan bir yazılım geliştiriciyim. İlk projemi başarıyla tamamlayıp yayına aldıktan sonra, şu an kendimi daha da geliştirmek adına ikinci projem üzerinde aktif olarak çalışıyorum. Yeni teknolojileri öğrenmeye ve sektörel deneyim kazanmaya hazırım.",
       interest:
@@ -39,6 +40,7 @@ export const defaultContent: SiteContent = {
         description:
           "Bilişim ve yazılım alanında kendimi geliştiriyor, öğrendiklerimi gerçek projelere dönüştürüyorum. Web geliştirme, proje geliştirme ve yapay zekâ destekli araçlar üzerine çalışmalar yapıyorum.",
       },
+      extras: [],
     },
   },
   projects: [

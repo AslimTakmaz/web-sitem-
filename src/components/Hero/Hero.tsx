@@ -1,5 +1,5 @@
 import { useSiteContent } from "../../context/SiteContentContext";
-import { GitHubIcon, LinkedInIcon } from "../icons/SocialIcons";
+import { ExternalLinkIcon, GitHubIcon, LinkedInIcon } from "../icons/SocialIcons";
 import styles from "./Hero.module.css";
 
 export function Hero() {
@@ -62,6 +62,20 @@ export function Hero() {
             >
               <LinkedInIcon />
             </a>
+            {personal.generalExtras
+              .filter((extra) => /^https?:\/\//i.test(extra.value.trim()))
+              .map((extra) => (
+                <a
+                  key={extra.id}
+                  href={extra.value}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.socialLink}
+                  aria-label={extra.label}
+                >
+                  <ExternalLinkIcon />
+                </a>
+              ))}
           </div>
         </div>
       </div>

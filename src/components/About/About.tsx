@@ -56,6 +56,13 @@ export function About() {
                 ))}
               </ul>
             </div>
+
+            {about.extras.map((extra) => (
+              <div key={extra.id}>
+                <h3 className={styles.subheading}>{extra.label}</h3>
+                <p className={styles.paragraph}>{extra.value}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { get, put } from "@vercel/blob";
 import type { SiteContent } from "../../src/types/siteContent";
+import { normalizeContent } from "../../src/data/normalizeContent";
 
 const BLOB_PATHNAME = "portfolio/site-content.json";
 
@@ -20,14 +21,14 @@ export async function loadSiteContent(): Promise<SiteContent> {
 
       if (result?.stream) {
         const text = await new Response(result.stream).text();
-        return JSON.parse(text) as SiteContent;
+        return normalizeContent(JSON.parse(text) as SiteContent);
       }
     } catch {
       // Blob yoksa varsayılana düş
     }
   }
 
-  return readDefaultContent();
+  return normalizeContent(readDefaultContent());
 }
 
 export async function saveSiteContent(content: SiteContent) {

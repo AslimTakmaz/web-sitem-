@@ -1,5 +1,5 @@
 import { useSiteContent } from "../../context/SiteContentContext";
-import { EmailIcon, GitHubIcon, LinkedInIcon } from "../icons/SocialIcons";
+import { EmailIcon, ExternalLinkIcon, GitHubIcon, LinkedInIcon } from "../icons/SocialIcons";
 import styles from "./Contact.module.css";
 
 export function Contact() {
@@ -57,6 +57,38 @@ export function Contact() {
                 <span className={styles.linkValue}>Profilimi görüntüle</span>
               </span>
             </a>
+
+            {personal.generalExtras.map((extra) => {
+              const isLink = /^https?:\/\//i.test(extra.value.trim());
+
+              if (isLink) {
+                return (
+                  <a
+                    key={extra.id}
+                    href={extra.value}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.contactLink}
+                  >
+                    <ExternalLinkIcon />
+                    <span className={styles.linkText}>
+                      <span className={styles.linkLabel}>{extra.label}</span>
+                      <span className={styles.linkValue}>Bağlantıyı aç</span>
+                    </span>
+                  </a>
+                );
+              }
+
+              return (
+                <div key={extra.id} className={styles.contactLink}>
+                  <ExternalLinkIcon />
+                  <span className={styles.linkText}>
+                    <span className={styles.linkLabel}>{extra.label}</span>
+                    <span className={styles.linkValue}>{extra.value}</span>
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
