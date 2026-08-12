@@ -200,6 +200,33 @@
   gap: 1rem;
 }
 
+.fieldBox {
+  padding: 1rem;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+
+.fieldBoxHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.fieldBoxLabel {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.fieldBoxBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
 .fullWidth {
   grid-column: 1 / -1;
 }

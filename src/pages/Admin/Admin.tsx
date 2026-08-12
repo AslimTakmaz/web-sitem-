@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { Logo } from "../../components/Logo/Logo";
 import { useSiteContent } from "../../context/SiteContentContext";
@@ -17,6 +17,30 @@ const TABS: { id: Tab; label: string; description: string }[] = [
   { id: "projects", label: "Projeler", description: "Proje listesi ve detayları" },
   { id: "colors", label: "Renkler", description: "Açık ve koyu tema renkleri" },
 ];
+
+function FieldBox({
+  label,
+  fullWidth = false,
+  onDelete,
+  children,
+}: {
+  label: string;
+  fullWidth?: boolean;
+  onDelete: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <div className={`${styles.fieldBox} ${fullWidth ? styles.fullWidth : ""}`}>
+      <div className={styles.fieldBoxHeader}>
+        <span className={styles.fieldBoxLabel}>{label}</span>
+        <button type="button" className={styles.dangerBtn} onClick={onDelete}>
+          Sil
+        </button>
+      </div>
+      <div className={styles.fieldBoxBody}>{children}</div>
+    </div>
+  );
+}
 
 function ColorField({
   label,
@@ -381,8 +405,15 @@ export function AdminPage() {
           <div className={styles.panel}>
         {tab === "general" && (
           <div className={styles.grid}>
-            <label className={styles.field}>
-              <span>İsim</span>
+            <FieldBox
+              label="İsim"
+              onDelete={() =>
+                setContent((prev) => ({
+                  ...prev,
+                  personal: { ...prev.personal, name: "" },
+                }))
+              }
+            >
               <input
                 className={styles.input}
                 value={content.personal.name}
@@ -393,9 +424,16 @@ export function AdminPage() {
                   }))
                 }
               />
-            </label>
-            <label className={styles.field}>
-              <span>Unvan</span>
+            </FieldBox>
+            <FieldBox
+              label="Unvan"
+              onDelete={() =>
+                setContent((prev) => ({
+                  ...prev,
+                  personal: { ...prev.personal, title: "" },
+                }))
+              }
+            >
               <input
                 className={styles.input}
                 value={content.personal.title}
@@ -406,9 +444,17 @@ export function AdminPage() {
                   }))
                 }
               />
-            </label>
-            <label className={`${styles.field} ${styles.fullWidth}`}>
-              <span>Tagline</span>
+            </FieldBox>
+            <FieldBox
+              label="Tagline"
+              fullWidth
+              onDelete={() =>
+                setContent((prev) => ({
+                  ...prev,
+                  personal: { ...prev.personal, tagline: "" },
+                }))
+              }
+            >
               <textarea
                 className={styles.textarea}
                 value={content.personal.tagline}
@@ -419,9 +465,19 @@ export function AdminPage() {
                   }))
                 }
               />
-            </label>
-            <label className={styles.field}>
-              <span>E-posta</span>
+            </FieldBox>
+            <FieldBox
+              label="E-posta"
+              onDelete={() =>
+                setContent((prev) => ({
+                  ...prev,
+                  personal: {
+                    ...prev.personal,
+                    contact: { email: "" },
+                  },
+                }))
+              }
+            >
               <input
                 className={styles.input}
                 value={content.personal.contact.email}
@@ -435,9 +491,19 @@ export function AdminPage() {
                   }))
                 }
               />
-            </label>
-            <label className={styles.field}>
-              <span>GitHub</span>
+            </FieldBox>
+            <FieldBox
+              label="GitHub"
+              onDelete={() =>
+                setContent((prev) => ({
+                  ...prev,
+                  personal: {
+                    ...prev.personal,
+                    social: { ...prev.personal.social, github: "" },
+                  },
+                }))
+              }
+            >
               <input
                 className={styles.input}
                 value={content.personal.social.github}
@@ -451,9 +517,19 @@ export function AdminPage() {
                   }))
                 }
               />
-            </label>
-            <label className={styles.field}>
-              <span>LinkedIn</span>
+            </FieldBox>
+            <FieldBox
+              label="LinkedIn"
+              onDelete={() =>
+                setContent((prev) => ({
+                  ...prev,
+                  personal: {
+                    ...prev.personal,
+                    social: { ...prev.personal.social, linkedin: "" },
+                  },
+                }))
+              }
+            >
               <input
                 className={styles.input}
                 value={content.personal.social.linkedin}
@@ -467,7 +543,7 @@ export function AdminPage() {
                   }))
                 }
               />
-            </label>
+            </FieldBox>
 
             <ExtraFieldsEditor
               title="Ek Alanlar"
@@ -485,8 +561,19 @@ export function AdminPage() {
 
         {tab === "about" && (
           <div className={styles.grid}>
-            <label className={`${styles.field} ${styles.fullWidth}`}>
-              <span>Biyografi</span>
+            <FieldBox
+              label="Biyografi"
+              fullWidth
+              onDelete={() =>
+                setContent((prev) => ({
+                  ...prev,
+                  personal: {
+                    ...prev.personal,
+                    about: { ...prev.personal.about, bio: "" },
+                  },
+                }))
+              }
+            >
               <textarea
                 className={styles.textarea}
                 value={content.personal.about.bio}
@@ -500,9 +587,20 @@ export function AdminPage() {
                   }))
                 }
               />
-            </label>
-            <label className={`${styles.field} ${styles.fullWidth}`}>
-              <span>Yazılıma İlgi</span>
+            </FieldBox>
+            <FieldBox
+              label="Yazılıma İlgi"
+              fullWidth
+              onDelete={() =>
+                setContent((prev) => ({
+                  ...prev,
+                  personal: {
+                    ...prev.personal,
+                    about: { ...prev.personal.about, interest: "" },
+                  },
+                }))
+              }
+            >
               <textarea
                 className={styles.textarea}
                 value={content.personal.about.interest}
@@ -516,11 +614,26 @@ export function AdminPage() {
                   }))
                 }
               />
-            </label>
-            <label className={styles.field}>
-              <span>Eğitim Başlığı</span>
+            </FieldBox>
+            <FieldBox
+              label="Eğitim"
+              fullWidth
+              onDelete={() =>
+                setContent((prev) => ({
+                  ...prev,
+                  personal: {
+                    ...prev.personal,
+                    about: {
+                      ...prev.personal.about,
+                      education: { title: "", period: "", description: "" },
+                    },
+                  },
+                }))
+              }
+            >
               <input
                 className={styles.input}
+                placeholder="Eğitim başlığı"
                 value={content.personal.about.education.title}
                 onChange={(e) =>
                   setContent((prev) => ({
@@ -538,11 +651,9 @@ export function AdminPage() {
                   }))
                 }
               />
-            </label>
-            <label className={styles.field}>
-              <span>Eğitim Dönemi</span>
               <input
                 className={styles.input}
+                placeholder="Eğitim dönemi"
                 value={content.personal.about.education.period}
                 onChange={(e) =>
                   setContent((prev) => ({
@@ -560,11 +671,9 @@ export function AdminPage() {
                   }))
                 }
               />
-            </label>
-            <label className={`${styles.field} ${styles.fullWidth}`}>
-              <span>Eğitim Açıklaması</span>
               <textarea
                 className={styles.textarea}
+                placeholder="Eğitim açıklaması"
                 value={content.personal.about.education.description}
                 onChange={(e) =>
                   setContent((prev) => ({
@@ -582,9 +691,20 @@ export function AdminPage() {
                   }))
                 }
               />
-            </label>
-            <label className={`${styles.field} ${styles.fullWidth}`}>
-              <span>Teknolojiler (virgülle ayır)</span>
+            </FieldBox>
+            <FieldBox
+              label="Teknolojiler (virgülle ayır)"
+              fullWidth
+              onDelete={() =>
+                setContent((prev) => ({
+                  ...prev,
+                  personal: {
+                    ...prev.personal,
+                    about: { ...prev.personal.about, technologies: [] },
+                  },
+                }))
+              }
+            >
               <input
                 className={styles.input}
                 value={content.personal.about.technologies.join(", ")}
@@ -604,9 +724,20 @@ export function AdminPage() {
                   }))
                 }
               />
-            </label>
-            <label className={`${styles.field} ${styles.fullWidth}`}>
-              <span>Gelişim Alanları (virgülle ayır)</span>
+            </FieldBox>
+            <FieldBox
+              label="Gelişim Alanları (virgülle ayır)"
+              fullWidth
+              onDelete={() =>
+                setContent((prev) => ({
+                  ...prev,
+                  personal: {
+                    ...prev.personal,
+                    about: { ...prev.personal.about, focusAreas: [] },
+                  },
+                }))
+              }
+            >
               <input
                 className={styles.input}
                 value={content.personal.about.focusAreas.join(", ")}
@@ -626,7 +757,7 @@ export function AdminPage() {
                   }))
                 }
               />
-            </label>
+            </FieldBox>
 
             <div className={styles.fullWidth}>
               <ExtraFieldsEditor
@@ -663,8 +794,10 @@ export function AdminPage() {
                   </button>
                 </div>
                 <div className={styles.grid}>
-                  <label className={styles.field}>
-                    <span>Proje Adı</span>
+                  <FieldBox
+                    label="Proje Adı"
+                    onDelete={() => updateProject(index, { ...project, name: "" })}
+                  >
                     <input
                       className={styles.input}
                       value={project.name}
@@ -672,9 +805,16 @@ export function AdminPage() {
                         updateProject(index, { ...project, name: e.target.value })
                       }
                     />
-                  </label>
-                  <label className={styles.field}>
-                    <span>GitHub Linki</span>
+                  </FieldBox>
+                  <FieldBox
+                    label="GitHub Linki"
+                    onDelete={() =>
+                      updateProject(index, {
+                        ...project,
+                        links: { ...project.links, github: undefined },
+                      })
+                    }
+                  >
                     <input
                       className={styles.input}
                       value={project.links.github ?? ""}
@@ -685,9 +825,12 @@ export function AdminPage() {
                         })
                       }
                     />
-                  </label>
-                  <label className={`${styles.field} ${styles.fullWidth}`}>
-                    <span>Açıklama</span>
+                  </FieldBox>
+                  <FieldBox
+                    label="Açıklama"
+                    fullWidth
+                    onDelete={() => updateProject(index, { ...project, description: "" })}
+                  >
                     <textarea
                       className={styles.textarea}
                       value={project.description}
@@ -695,9 +838,12 @@ export function AdminPage() {
                         updateProject(index, { ...project, description: e.target.value })
                       }
                     />
-                  </label>
-                  <label className={`${styles.field} ${styles.fullWidth}`}>
-                    <span>Teknolojiler (virgülle ayır)</span>
+                  </FieldBox>
+                  <FieldBox
+                    label="Teknolojiler (virgülle ayır)"
+                    fullWidth
+                    onDelete={() => updateProject(index, { ...project, technologies: [] })}
+                  >
                     <input
                       className={styles.input}
                       value={project.technologies.join(", ")}
@@ -711,9 +857,12 @@ export function AdminPage() {
                         })
                       }
                     />
-                  </label>
-                  <label className={`${styles.field} ${styles.fullWidth}`}>
-                    <span>Özellikler (virgülle ayır)</span>
+                  </FieldBox>
+                  <FieldBox
+                    label="Özellikler (virgülle ayır)"
+                    fullWidth
+                    onDelete={() => updateProject(index, { ...project, features: [] })}
+                  >
                     <input
                       className={styles.input}
                       value={project.features.join(", ")}
@@ -727,7 +876,7 @@ export function AdminPage() {
                         })
                       }
                     />
-                  </label>
+                  </FieldBox>
                 </div>
               </div>
             ))}
