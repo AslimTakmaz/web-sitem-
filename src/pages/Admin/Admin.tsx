@@ -9,6 +9,13 @@ const TOKEN_KEY = "portfolio-admin-token";
 
 type Tab = "general" | "about" | "projects" | "colors";
 
+const TABS: { id: Tab; label: string; description: string }[] = [
+  { id: "general", label: "Genel", description: "İsim, iletişim ve sosyal medya" },
+  { id: "about", label: "Hakkımda", description: "Biyografi, eğitim ve yetenekler" },
+  { id: "projects", label: "Projeler", description: "Proje listesi ve detayları" },
+  { id: "colors", label: "Renkler", description: "Açık ve koyu tema renkleri" },
+];
+
 function ColorField({
   label,
   value,
@@ -183,8 +190,9 @@ export function AdminPage() {
 
   if (!token) {
     return (
-      <div className={styles.page}>
+      <div className={styles.loginPage}>
         <div className={styles.loginCard}>
+          <p className={styles.loginBadge}>Yönetim</p>
           <h1 className={styles.title}>Admin Girişi</h1>
           <p className={styles.subtitle}>Site içeriğini düzenlemek için giriş yapın.</p>
           <form onSubmit={handleLogin} className={styles.form}>
@@ -204,64 +212,77 @@ export function AdminPage() {
             </button>
           </form>
           <Link to="/" className={styles.backLink}>
-            Siteye dön
+            ← Siteye dön
           </Link>
         </div>
       </div>
     );
   }
 
+  const activeTab = TABS.find((item) => item.id === tab) ?? TABS[0];
+
   return (
-    <div className={styles.page}>
-      <div className={styles.panelInner}>
-      <header className={styles.header}>
-        <div>
-          <h1 className={styles.title}>Admin Paneli</h1>
-          <p className={styles.subtitle}>Yazılar, projeler ve renkleri düzenleyin.</p>
+    <div className={styles.shell}>
+      <aside className={styles.sidebar}>
+        <div className={styles.sidebarBrand}>
+          <span className={styles.sidebarLogo}>AT</span>
+          <div>
+            <p className={styles.sidebarTitle}>Admin Panel</p>
+            <p className={styles.sidebarSubtitle}>Portföy CMS</p>
+          </div>
         </div>
-        <div className={styles.headerActions}>
-          <Link to="/" className={styles.secondaryBtn}>
+
+        <nav className={styles.sidebarNav} aria-label="Admin menüsü">
+          {TABS.map(({ id, label }) => (
+            <button
+              key={id}
+              type="button"
+              className={`${styles.sidebarTab} ${tab === id ? styles.sidebarTabActive : ""}`}
+              onClick={() => setTab(id)}
+            >
+              {label}
+            </button>
+          ))}
+        </nav>
+
+        <div className={styles.sidebarFooter}>
+          <Link to="/" className={styles.sidebarLink}>
             Siteye Dön
           </Link>
-          <button
-            type="button"
-            className={styles.secondaryBtn}
-            onClick={() => {
-              sessionStorage.removeItem(TOKEN_KEY);
-              setToken(null);
-            }}
-          >
-            Çıkış
-          </button>
-          <button type="button" className={styles.primaryBtn} onClick={handleSave} disabled={saving}>
-            {saving ? "Kaydediliyor..." : "Kaydet"}
-          </button>
         </div>
-      </header>
+      </aside>
 
-      {status && <p className={status.includes("kaydedildi") ? styles.success : styles.error}>{status}</p>}
+      <div className={styles.main}>
+        <header className={styles.topbar}>
+          <div>
+            <h1 className={styles.topbarTitle}>{activeTab.label}</h1>
+            <p className={styles.topbarSubtitle}>{activeTab.description}</p>
+          </div>
+          <div className={styles.topbarActions}>
+            <button
+              type="button"
+              className={styles.secondaryBtn}
+              onClick={() => {
+                sessionStorage.removeItem(TOKEN_KEY);
+                setToken(null);
+              }}
+            >
+              Çıkış
+            </button>
+            <button type="button" className={styles.primaryBtn} onClick={handleSave} disabled={saving}>
+              {saving ? "Kaydediliyor..." : "Kaydet"}
+            </button>
+          </div>
+        </header>
 
-      <nav className={styles.tabs}>
-        {(
-          [
-            ["general", "Genel"],
-            ["about", "Hakkımda"],
-            ["projects", "Projeler"],
-            ["colors", "Renkler"],
-          ] as const
-        ).map(([id, label]) => (
-          <button
-            key={id}
-            type="button"
-            className={`${styles.tab} ${tab === id ? styles.tabActive : ""}`}
-            onClick={() => setTab(id)}
-          >
-            {label}
-          </button>
-        ))}
-      </nav>
+        {status && (
+          <p className={`${styles.statusBanner} ${status.includes("kaydedildi") ? styles.success : styles.error}`}>
+            {status}
+          </p>
+        )}
 
-      <div className={styles.panel}>
+        <div className={styles.content}>
+          <div className={styles.panel}>
         {tab === "general" && (
           <div className={styles.grid}>
             <label className={styles.field}>
@@ -606,8 +627,9 @@ export function AdminPage() {
             />
           </div>
         )}
+          </div>
+        </div>
       </div>
-    </div>
     </div>
   );
 }
