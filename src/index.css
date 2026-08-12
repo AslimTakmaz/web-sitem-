@@ -12,10 +12,10 @@
   --color-border-hover: #3a3a45;
   --color-text: #f4f4f5;
   --color-text-muted: #a1a1aa;
-  --color-accent: #3b82f6;
-  --color-accent-hover: #2563eb;
-  --color-baby-blue: #89cff0;
-  --color-label: #89cff0;
+  --color-accent: #2dd4bf;
+  --color-accent-hover: #14b8a6;
+  --color-baby-blue: #5eead4;
+  --color-label: #5eead4;
   --color-navbar-bg: rgba(12, 12, 12, 0.78);
   --color-logo-mark-bg: rgba(255, 255, 255, 0.05);
   --color-overlay: rgba(0, 0, 0, 0.72);
@@ -27,7 +27,7 @@
   --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.35);
   --shadow-nav: 0 1px 0 rgba(255, 255, 255, 0.05);
   --shadow-elevated: none;
-  --gradient-line-end: rgba(137, 207, 240, 0.12);
+  --gradient-line-end: rgba(94, 234, 212, 0.12);
 }
 
 [data-theme="light"] {
@@ -43,10 +43,10 @@
   --color-border-hover: #cbd5e1;
   --color-text: #0f172a;
   --color-text-muted: #64748b;
-  --color-accent: #2563eb;
-  --color-accent-hover: #1d4ed8;
-  --color-baby-blue: #0284c7;
-  --color-label: #2563eb;
+  --color-accent: #0d9488;
+  --color-accent-hover: #0f766e;
+  --color-baby-blue: #14b8a6;
+  --color-label: #0d9488;
   --color-navbar-bg: rgba(255, 255, 255, 0.78);
   --color-logo-mark-bg: rgba(255, 255, 255, 0.75);
   --color-overlay: rgba(15, 23, 42, 0.45);
@@ -58,7 +58,7 @@
   --shadow-card-hover: 0 8px 28px rgba(15, 23, 42, 0.1);
   --shadow-nav: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 0 rgba(15, 23, 42, 0.04);
   --shadow-elevated: 0 2px 8px rgba(15, 23, 42, 0.05);
-  --gradient-line-end: rgba(2, 132, 199, 0.1);
+  --gradient-line-end: rgba(13, 148, 136, 0.1);
 }
 
 :root {
