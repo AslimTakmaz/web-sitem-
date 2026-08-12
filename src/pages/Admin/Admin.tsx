@@ -1,7 +1,8 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { useSiteContent } from "../../context/SiteContentContext";
 import { defaultContent } from "../../data/defaultContent";
 import type { Project, SiteContent, ThemePalette } from "../../types/siteContent";
+import { useAdmin } from "../../context/AdminContext";
 import styles from "./Admin.module.css";
 
 const TOKEN_KEY = "portfolio-admin-token";
@@ -65,7 +66,9 @@ function ThemeEditor({
   );
 }
 
-export function AdminPage() {
+export function AdminPanel() {
+  const { closeAdmin } = useAdmin();
+  const { refresh } = useSiteContent();
   const [token, setToken] = useState<string | null>(() => sessionStorage.getItem(TOKEN_KEY));
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
@@ -141,6 +144,7 @@ export function AdminPage() {
       }
 
       setStatus("Değişiklikler kaydedildi.");
+      await refresh();
     } catch {
       setStatus("Kayıt sırasında hata oluştu.");
     } finally {
@@ -180,45 +184,43 @@ export function AdminPage() {
 
   if (!token) {
     return (
-      <div className={styles.page}>
-        <div className={styles.loginCard}>
-          <h1 className={styles.title}>Admin Girişi</h1>
-          <p className={styles.subtitle}>Site içeriğini düzenlemek için giriş yapın.</p>
-          <form onSubmit={handleLogin} className={styles.form}>
-            <label className={styles.field}>
-              <span>Şifre</span>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className={styles.input}
-                required
-              />
-            </label>
-            {loginError && <p className={styles.error}>{loginError}</p>}
-            <button type="submit" className={styles.primaryBtn}>
-              Giriş Yap
-            </button>
-          </form>
-          <Link to="/" className={styles.backLink}>
-            Siteye dön
-          </Link>
-        </div>
+      <div className={styles.loginCard}>
+        <h2 className={styles.title}>Admin Girişi</h2>
+        <p className={styles.subtitle}>Site içeriğini düzenlemek için giriş yapın.</p>
+        <form onSubmit={handleLogin} className={styles.form}>
+          <label className={styles.field}>
+            <span>Şifre</span>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={styles.input}
+              required
+            />
+          </label>
+          {loginError && <p className={styles.error}>{loginError}</p>}
+          <button type="submit" className={styles.primaryBtn}>
+            Giriş Yap
+          </button>
+        </form>
+        <button type="button" className={styles.backLink} onClick={closeAdmin}>
+          Kapat
+        </button>
       </div>
     );
   }
 
   return (
-    <div className={styles.page}>
+    <div className={styles.panelInner}>
       <header className={styles.header}>
         <div>
-          <h1 className={styles.title}>Admin Paneli</h1>
+          <h2 className={styles.title}>Admin Paneli</h2>
           <p className={styles.subtitle}>Yazılar, projeler ve renkleri düzenleyin.</p>
         </div>
         <div className={styles.headerActions}>
-          <Link to="/" className={styles.secondaryBtn}>
-            Siteyi Gör
-          </Link>
+          <button type="button" className={styles.secondaryBtn} onClick={closeAdmin}>
+            Kapat
+          </button>
           <button
             type="button"
             className={styles.secondaryBtn}
@@ -602,6 +604,42 @@ export function AdminPage() {
             />
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+export function AdminOverlay() {
+  const { isOpen, closeAdmin } = useAdmin();
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeAdmin();
+    };
+
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", handleKey);
+
+    return () => {
+      document.body.style.overflow = "";
+      document.removeEventListener("keydown", handleKey);
+    };
+  }, [isOpen, closeAdmin]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className={styles.overlay} role="dialog" aria-modal="true" aria-label="Admin paneli">
+      <button
+        type="button"
+        className={styles.backdrop}
+        onClick={closeAdmin}
+        aria-label="Admin panelini kapat"
+      />
+      <div className={styles.drawer}>
+        <AdminPanel />
       </div>
     </div>
   );
