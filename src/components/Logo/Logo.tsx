@@ -1,37 +1,34 @@
-import { personal } from "../../data/personal";
 import styles from "./Logo.module.css";
 
 export function Logo() {
   return (
-    <div className={styles.logo}>
-      <div className={styles.mark} aria-hidden="true">
+    <div className={styles.logo} aria-hidden="true">
+      <div className={styles.mark}>
         <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <text
-            x="7"
-            y="28"
+          <path
+            d="M8.5 28.5L15.5 11.5L22.5 28.5"
             className={styles.letterA}
-            fontFamily="Inter, system-ui, sans-serif"
-            fontSize="22"
-            fontWeight="300"
-          >
-            A
-          </text>
-          <text
-            x="19"
-            y="28"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M11 22.5H20"
+            className={styles.letterA}
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+          <path
+            d="M17.5 10.5H31.5V14H26.25V28.5H22.75V14H17.5V10.5Z"
             className={styles.letterT}
-            fontFamily="Inter, system-ui, sans-serif"
-            fontSize="24"
-            fontWeight="700"
-          >
-            T
-          </text>
+          />
+          <path
+            d="M6 34H34"
+            className={styles.accentLine}
+            strokeWidth="1"
+            strokeLinecap="round"
+          />
         </svg>
-      </div>
-
-      <div className={styles.text}>
-        <span className={styles.subtitle}>{personal.logoSubtitle}</span>
-        <span className={styles.line} aria-hidden="true" />
       </div>
     </div>
   );

@@ -7,7 +7,6 @@ export const personal = {
   name: "Aslım Takmaz",
   /** Google SEO — canlı site linkin (Vercel veya özel domain) */
   siteUrl: "https://aslimtakmaz-websitem.vercel.app",
-  logoSubtitle: "Developer Portfolio",
   title: "Software Development Intern",
   tagline:
     "Modern web teknolojileri kullanarak kullanıcı odaklı web uygulamaları geliştiriyorum.",

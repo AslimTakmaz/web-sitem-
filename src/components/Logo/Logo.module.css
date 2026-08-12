@@ -1,79 +1,48 @@
 .logo {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
 }
 
 .mark {
   flex-shrink: 0;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border: 1.5px solid var(--color-baby-blue);
-  border-radius: 8px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-logo-mark-bg);
+  background: linear-gradient(
+    145deg,
+    var(--color-logo-mark-bg) 0%,
+    var(--color-bg-elevated) 100%
+  );
   box-shadow: var(--shadow-elevated);
   transition: var(--theme-transition);
 }
 
+.mark svg {
+  width: 100%;
+  height: 100%;
+  padding: 5px;
+}
+
 .letterA {
-  fill: var(--color-text);
+  stroke: var(--color-text);
 }
 
 .letterT {
   fill: var(--color-baby-blue);
 }
 
-.mark svg {
-  width: 100%;
-  height: 100%;
-}
-
-.text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-  min-width: 0;
-}
-
-.subtitle {
-  font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--color-baby-blue);
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
-.line {
-  display: block;
-  width: 100%;
-  max-width: 140px;
-  height: 1px;
-  margin-top: 0.125rem;
-  background: linear-gradient(
-    90deg,
-    var(--color-baby-blue) 0%,
-    var(--gradient-line-end) 100%
-  );
-}
-
-@media (max-width: 640px) {
-  .line {
-    display: none;
-  }
-
-  .mark {
-    width: 36px;
-    height: 36px;
-  }
+.accentLine {
+  stroke: var(--color-baby-blue);
+  opacity: 0.35;
 }
 
 @media (max-width: 480px) {
-  .text {
-    display: none;
+  .mark {
+    width: 38px;
+    height: 38px;
   }
 }
