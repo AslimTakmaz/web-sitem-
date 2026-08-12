@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
+import { Logo } from "../../components/Logo/Logo";
 import { useSiteContent } from "../../context/SiteContentContext";
 import { defaultContent } from "../../data/defaultContent";
 import { normalizeContent } from "../../data/normalizeContent";
@@ -320,7 +321,7 @@ export function AdminPage() {
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
         <div className={styles.sidebarBrand}>
-          <span className={styles.sidebarLogo}>AT</span>
+          <Logo />
           <div>
             <p className={styles.sidebarTitle}>Admin Panel</p>
             <p className={styles.sidebarSubtitle}>Portföy CMS</p>

@@ -86,20 +86,6 @@
   border-bottom: 1px solid var(--color-border);
 }
 
-.sidebarLogo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: var(--color-text);
-  background: var(--color-tag-bg);
-  border: 1px solid var(--color-border);
-  border-radius: 10px;
-}
-
 .sidebarTitle {
   font-size: 0.9375rem;
   font-weight: 600;
@@ -449,16 +435,6 @@
 
   .sidebarBrand {
     padding: 0.25rem 0.5rem 1rem;
-  }
-
-  .sidebarLogo {
-    width: 36px;
-    height: 36px;
-    font-size: 0.8125rem;
-  }
-
-  .sidebarTitle {
-    font-size: 0.875rem;
   }
 
   .sidebarTab {
