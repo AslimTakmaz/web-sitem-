@@ -3,8 +3,6 @@
  * Yeni proje eklemek için projects dizisine yeni bir obje eklemeniz yeterli.
  */
 
-import { personal } from "./personal";
-
 export interface Project {
   id: string;
   name: string;
@@ -60,7 +58,6 @@ export const projects: Project[] = [
     ],
     links: {
       github: "https://github.com/AslimTakmaz/web-sitem-",
-      demo: personal.siteUrl,
     },
   },
 ];

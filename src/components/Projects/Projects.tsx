@@ -136,7 +136,7 @@ function ProjectCard({ project }: { project: Project }) {
           >
             Detayları Gör
           </button>
-          {hasDemo ? (
+          {hasDemo && (
             <a
               href={project.links.demo}
               target="_blank"
@@ -146,14 +146,6 @@ function ProjectCard({ project }: { project: Project }) {
               <ExternalLinkIcon />
               Demo
             </a>
-          ) : (
-            <span
-              className={styles.btnGhost}
-              style={{ opacity: 0.4, cursor: "not-allowed" }}
-              title="Demo bağlantısı henüz eklenmedi"
-            >
-              Demo
-            </span>
           )}
         </div>
       </article>
