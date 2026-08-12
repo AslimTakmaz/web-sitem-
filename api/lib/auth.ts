@@ -3,8 +3,12 @@ import type { VercelRequest } from "@vercel/node";
 
 const TOKEN_TTL_MS = 1000 * 60 * 60 * 12;
 
+function getAdminSecret() {
+  return process.env.ADMIN_SECRET ?? process.env.ADMIN_PASSWORD ?? "admin123";
+}
+
 export function createAdminToken() {
-  const secret = process.env.ADMIN_SECRET ?? process.env.ADMIN_PASSWORD ?? "change-me";
+  const secret = getAdminSecret();
   const expiresAt = Date.now() + TOKEN_TTL_MS;
   const payload = JSON.stringify({ expiresAt });
   const signature = createHmac("sha256", secret).update(payload).digest("hex");
@@ -15,7 +19,7 @@ export function verifyAdminToken(token: string | undefined) {
   if (!token) return false;
 
   try {
-    const secret = process.env.ADMIN_SECRET ?? process.env.ADMIN_PASSWORD ?? "change-me";
+    const secret = getAdminSecret();
     const decoded = JSON.parse(
       Buffer.from(token, "base64url").toString("utf8"),
     ) as { payload: string; signature: string };
@@ -45,6 +49,5 @@ export function getBearerToken(req: VercelRequest) {
 }
 
 export function isValidPassword(password: string) {
-  const expected = process.env.ADMIN_PASSWORD ?? "admin123";
-  return password === expected;
+  return password === getAdminSecret();
 }

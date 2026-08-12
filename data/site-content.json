@@ -11,6 +11,7 @@
     "contact": {
       "email": "takmazaslim096@gmail.com"
     },
+    "generalExtras": [],
     "about": {
       "bio": "Teknoloji dünyasına Software Development Intern olarak adım atan ve sürekli öğrenmeye odaklanan bir yazılım geliştiriciyim. İlk projemi başarıyla tamamlayıp yayına aldıktan sonra, şu an kendimi daha da geliştirmek adına ikinci projem üzerinde aktif olarak çalışıyorum. Yeni teknolojileri öğrenmeye ve sektörel deneyim kazanmaya hazırım.",
       "interest": "Yazılıma olan ilgimi projeler geliştirerek ilerletiyorum. Kodlama bilgim başlangıç seviyesinde olsa da, yapay zekâ destekli araçları kullanarak Stajyer Takip Paneli geliştirdim ve şu anda kendi portföy web sitem üzerinde çalışıyorum.",
@@ -32,7 +33,8 @@
         "title": "11. Sınıf Bilişim Teknologileri Öğrencisi",
         "period": "2023 – Devam ediyor",
         "description": "Bilişim ve yazılım alanında kendimi geliştiriyor, öğrendiklerimi gerçek projelere dönüştürüyorum. Web geliştirme, proje geliştirme ve yapay zekâ destekli araçlar üzerine çalışmalar yapıyorum."
-      }
+      },
+      "extras": []
     }
   },
   "projects": [

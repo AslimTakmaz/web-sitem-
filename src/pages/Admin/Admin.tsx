@@ -178,13 +178,20 @@ export function AdminPage() {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(async (res) => {
-        if (!res.ok) throw new Error("Yetkisiz");
+        if (res.status === 401) {
+          sessionStorage.removeItem(TOKEN_KEY);
+          setToken(null);
+          throw new Error("Yetkisiz");
+        }
+        if (!res.ok) {
+          throw new Error("İçerik yüklenemedi");
+        }
         return res.json() as Promise<SiteContent>;
       })
       .then((data) => setContent(normalizeContent(data)))
-      .catch(() => {
-        sessionStorage.removeItem(TOKEN_KEY);
-        setToken(null);
+      .catch((error) => {
+        if (error instanceof Error && error.message === "Yetkisiz") return;
+        setStatus("İçerik yüklenemedi. Sayfayı yenileyip tekrar deneyin.");
       });
   }, [token]);
 

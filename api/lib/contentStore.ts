@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { get, put } from "@vercel/blob";
 import type { SiteContent } from "../../src/types/siteContent";
-import { normalizeContent } from "../../src/data/normalizeContent";
+import { normalizeContent } from "./normalizeContent.js";
 
 const BLOB_PATHNAME = "portfolio/site-content.json";
 
