@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { head, put } from "@vercel/blob";
+import { get, put } from "@vercel/blob";
 import type { SiteContent } from "../../src/types/siteContent";
 
 const BLOB_PATHNAME = "portfolio/site-content.json";
@@ -13,15 +13,14 @@ function readDefaultContent(): SiteContent {
 export async function loadSiteContent(): Promise<SiteContent> {
   if (process.env.BLOB_READ_WRITE_TOKEN) {
     try {
-      const blob = await head(BLOB_PATHNAME, {
+      const result = await get(BLOB_PATHNAME, {
+        access: "private",
         token: process.env.BLOB_READ_WRITE_TOKEN,
       });
 
-      if (blob?.url) {
-        const response = await fetch(blob.url, { cache: "no-store" });
-        if (response.ok) {
-          return (await response.json()) as SiteContent;
-        }
+      if (result?.stream) {
+        const text = await new Response(result.stream).text();
+        return JSON.parse(text) as SiteContent;
       }
     } catch {
       // Blob yoksa varsayılana düş
@@ -37,7 +36,7 @@ export async function saveSiteContent(content: SiteContent) {
   }
 
   await put(BLOB_PATHNAME, JSON.stringify(content, null, 2), {
-    access: "public",
+    access: "private",
     addRandomSuffix: false,
     allowOverwrite: true,
     contentType: "application/json",
