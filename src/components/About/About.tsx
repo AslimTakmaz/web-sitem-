@@ -1,8 +1,9 @@
-import { personal } from "../../data/personal";
+import { useSiteContent } from "../../context/SiteContentContext";
 import styles from "./About.module.css";
 
 export function About() {
-  const { about } = personal;
+  const { content } = useSiteContent();
+  const { about } = content.personal;
 
   return (
     <section id="about" className={styles.section} aria-label="Hakkımda">

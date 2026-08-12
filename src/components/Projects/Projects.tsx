@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import type { Project } from "../../data/projects";
-import { projects } from "../../data/projects";
+import type { Project } from "../../types/siteContent";
+import { useSiteContent } from "../../context/SiteContentContext";
 import { CloseIcon, ExternalLinkIcon } from "../icons/SocialIcons";
 import styles from "./Projects.module.css";
 
@@ -158,6 +158,9 @@ function ProjectCard({ project }: { project: Project }) {
 }
 
 export function Projects() {
+  const { content } = useSiteContent();
+  const projects = content.projects;
+
   return (
     <section id="projects" className={styles.section} aria-label="Projeler">
       <div className={styles.container}>

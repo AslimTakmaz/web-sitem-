@@ -3,14 +3,14 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const personalPath = join(root, "src/data/personal.ts");
+const personalPath = join(root, "src/data/defaultContent.ts");
 const publicDir = join(root, "public");
 
 const source = readFileSync(personalPath, "utf8");
 const match = source.match(/siteUrl:\s*"([^"]+)"/);
 
 if (!match) {
-  console.error("personal.ts içinde siteUrl bulunamadı.");
+  console.error("defaultContent.ts içinde siteUrl bulunamadı.");
   process.exit(1);
 }
 
@@ -28,6 +28,7 @@ const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 
 const robots = `User-agent: *
 Allow: /
+Disallow: /admin
 
 Sitemap: ${siteUrl}/sitemap.xml
 `;

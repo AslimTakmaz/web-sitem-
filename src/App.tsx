@@ -1,24 +1,21 @@
-import { About } from "./components/About/About";
-import { Contact } from "./components/Contact/Contact";
-import { Footer } from "./components/Footer/Footer";
-import { Hero } from "./components/Hero/Hero";
-import { Navbar } from "./components/Navbar/Navbar";
-import { Projects } from "./components/Projects/Projects";
-import { Seo } from "./components/Seo/Seo";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { SiteContentProvider } from "./context/SiteContentContext";
+import { ThemeProvider } from "./context/ThemeContext";
+import { AdminPage } from "./pages/Admin/Admin";
+import { HomePage } from "./pages/HomePage";
 
 function App() {
   return (
-    <>
-      <Seo />
-      <Navbar />
-      <main>
-        <Hero />
-        <About />
-        <Projects />
-        <Contact />
-      </main>
-      <Footer />
-    </>
+    <BrowserRouter>
+      <ThemeProvider>
+        <SiteContentProvider>
+          <Routes>
+            <Route path="/admin" element={<AdminPage />} />
+            <Route path="/*" element={<HomePage />} />
+          </Routes>
+        </SiteContentProvider>
+      </ThemeProvider>
+    </BrowserRouter>
   );
 }
 

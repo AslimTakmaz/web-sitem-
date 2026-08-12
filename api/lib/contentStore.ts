@@ -1,0 +1,46 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { head, put } from "@vercel/blob";
+import type { SiteContent } from "../../src/types/siteContent";
+
+const BLOB_PATHNAME = "portfolio/site-content.json";
+
+function readDefaultContent(): SiteContent {
+  const filePath = join(process.cwd(), "data/site-content.json");
+  return JSON.parse(readFileSync(filePath, "utf8")) as SiteContent;
+}
+
+export async function loadSiteContent(): Promise<SiteContent> {
+  if (process.env.BLOB_READ_WRITE_TOKEN) {
+    try {
+      const blob = await head(BLOB_PATHNAME, {
+        token: process.env.BLOB_READ_WRITE_TOKEN,
+      });
+
+      if (blob?.url) {
+        const response = await fetch(blob.url, { cache: "no-store" });
+        if (response.ok) {
+          return (await response.json()) as SiteContent;
+        }
+      }
+    } catch {
+      // Blob yoksa varsayılana düş
+    }
+  }
+
+  return readDefaultContent();
+}
+
+export async function saveSiteContent(content: SiteContent) {
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    throw new Error("BLOB_READ_WRITE_TOKEN tanımlı değil");
+  }
+
+  await put(BLOB_PATHNAME, JSON.stringify(content, null, 2), {
+    access: "public",
+    addRandomSuffix: false,
+    allowOverwrite: true,
+    contentType: "application/json",
+    token: process.env.BLOB_READ_WRITE_TOKEN,
+  });
+}

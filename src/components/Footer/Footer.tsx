@@ -1,8 +1,10 @@
-import { personal } from "../../data/personal";
+import { useSiteContent } from "../../context/SiteContentContext";
 import { EmailIcon, GitHubIcon, LinkedInIcon } from "../icons/SocialIcons";
 import styles from "./Footer.module.css";
 
 export function Footer() {
+  const { content } = useSiteContent();
+  const { personal } = content;
   const year = new Date().getFullYear();
 
   return (

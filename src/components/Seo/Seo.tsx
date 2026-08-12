@@ -1,9 +1,11 @@
 import { useEffect } from "react";
-import { personal } from "../../data/personal";
+import { useSiteContent } from "../../context/SiteContentContext";
 
 export function Seo() {
+  const { content } = useSiteContent();
+
   useEffect(() => {
-    const { siteUrl, name, title, tagline, contact, social } = personal;
+    const { siteUrl, name, title, tagline, contact, social } = content.personal;
     const pageTitle = `${name} | ${title} | Portföy`;
 
     document.title = pageTitle;
@@ -73,7 +75,7 @@ export function Seo() {
       document.head.appendChild(script);
     }
     script.textContent = JSON.stringify(schema);
-  }, []);
+  }, [content.personal]);
 
   return null;
 }

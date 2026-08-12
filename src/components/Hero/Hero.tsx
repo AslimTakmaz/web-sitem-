@@ -1,8 +1,10 @@
-import { personal } from "../../data/personal";
+import { useSiteContent } from "../../context/SiteContentContext";
 import { GitHubIcon, LinkedInIcon } from "../icons/SocialIcons";
 import styles from "./Hero.module.css";
 
 export function Hero() {
+  const { content } = useSiteContent();
+  const { personal } = content;
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };

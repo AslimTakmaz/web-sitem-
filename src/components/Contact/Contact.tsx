@@ -1,8 +1,10 @@
-import { personal } from "../../data/personal";
+import { useSiteContent } from "../../context/SiteContentContext";
 import { EmailIcon, GitHubIcon, LinkedInIcon } from "../icons/SocialIcons";
 import styles from "./Contact.module.css";
 
 export function Contact() {
+  const { content } = useSiteContent();
+  const { personal } = content;
   const mailtoLink = `mailto:${personal.contact.email}?subject=${encodeURIComponent(
     "Portföy sitesinden iletişim"
   )}`;
