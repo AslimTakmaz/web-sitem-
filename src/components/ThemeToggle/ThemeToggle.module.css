@@ -1,22 +1,12 @@
 .wrapper {
   display: flex;
   align-items: center;
-  gap: 0.625rem;
-  padding: 0.3125rem 0.3125rem 0.3125rem 0.75rem;
+  padding: 0.25rem;
   border: 1px solid var(--color-border);
   border-radius: 999px;
   background-color: var(--color-bg-elevated);
   box-shadow: var(--shadow-elevated);
   transition: var(--theme-transition);
-}
-
-.label {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-  user-select: none;
 }
 
 .toggle {
@@ -76,14 +66,4 @@
 
 .option:active {
   transform: scale(0.94);
-}
-
-@media (max-width: 768px) {
-  .label {
-    display: none;
-  }
-
-  .wrapper {
-    padding: 0.25rem;
-  }
 }

@@ -23,7 +23,6 @@ export function ThemeToggle() {
 
   return (
     <div className={styles.wrapper}>
-      <span className={styles.label}>Tema</span>
       <div className={styles.toggle} role="group" aria-label="Tema seçimi">
         <span
           className={`${styles.indicator} ${theme === "light" ? styles.indicatorLight : ""}`}
