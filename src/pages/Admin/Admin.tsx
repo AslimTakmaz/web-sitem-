@@ -348,7 +348,7 @@ export function AdminPage() {
           <Logo />
           <div>
             <p className={styles.sidebarTitle}>Admin Panel</p>
-            <p className={styles.sidebarSubtitle}>Portföy CMS</p>
+            <p className={styles.sidebarSubtitle}>Web Sitem</p>
           </div>
         </div>
 
