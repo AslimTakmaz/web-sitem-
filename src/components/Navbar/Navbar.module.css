@@ -53,20 +53,6 @@
   color: var(--color-text);
 }
 
-.adminBtn {
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  padding: 0.375rem 0.75rem;
-  border-radius: 6px;
-  border: 1px solid var(--color-border);
-  transition: color var(--transition), border-color var(--transition);
-}
-
-.adminBtn:hover {
-  color: var(--color-baby-blue);
-  border-color: var(--color-baby-blue);
-}
-
 .hamburger {
   display: none;
   flex-direction: column;
@@ -139,16 +125,6 @@
 
   .mobileLinkActive {
     color: var(--color-text);
-  }
-
-  .mobileAdminBtn {
-    padding: 0.75rem 0;
-    font-size: 1rem;
-    color: var(--color-baby-blue);
-    text-align: left;
-    border-top: 1px solid var(--color-border);
-    margin-top: 0.5rem;
-    padding-top: 1rem;
   }
 
   .mobileTheme {

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useAdmin } from "../../context/AdminContext";
 import { Logo } from "../Logo/Logo";
 import { ThemeToggle } from "../ThemeToggle/ThemeToggle";
 import styles from "./Navbar.module.css";
@@ -12,7 +11,6 @@ const navItems = [
 ] as const;
 
 export function Navbar() {
-  const { openAdmin } = useAdmin();
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
 
@@ -72,9 +70,6 @@ export function Navbar() {
               </a>
             ))}
           </nav>
-          <button type="button" className={styles.adminBtn} onClick={openAdmin}>
-            Admin
-          </button>
           <ThemeToggle />
         </div>
 
@@ -111,16 +106,6 @@ export function Navbar() {
               {item.label}
             </a>
           ))}
-          <button
-            type="button"
-            className={styles.mobileAdminBtn}
-            onClick={() => {
-              setMenuOpen(false);
-              openAdmin();
-            }}
-          >
-            Admin
-          </button>
         </nav>
       )}
     </header>

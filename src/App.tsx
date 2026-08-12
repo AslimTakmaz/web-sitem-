@@ -1,9 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { AdminProvider } from "./context/AdminContext";
 import { SiteContentProvider } from "./context/SiteContentContext";
 import { ThemeProvider } from "./context/ThemeContext";
-import { AdminOverlay } from "./pages/Admin/Admin";
-import { AdminRouteOpener } from "./pages/Admin/AdminRouteOpener";
+import { AdminPage } from "./pages/Admin/Admin";
 import { HomePage } from "./pages/HomePage";
 
 function App() {
@@ -11,13 +9,10 @@ function App() {
     <BrowserRouter>
       <ThemeProvider>
         <SiteContentProvider>
-          <AdminProvider>
-            <Routes>
-              <Route path="/admin" element={<AdminRouteOpener />} />
-              <Route path="/*" element={<HomePage />} />
-            </Routes>
-            <AdminOverlay />
-          </AdminProvider>
+          <Routes>
+            <Route path="/admin" element={<AdminPage />} />
+            <Route path="/*" element={<HomePage />} />
+          </Routes>
         </SiteContentProvider>
       </ThemeProvider>
     </BrowserRouter>
