@@ -7,6 +7,14 @@
       (function () {
         var theme = localStorage.getItem("theme") || "dark";
         document.documentElement.setAttribute("data-theme", theme);
+
+        var css = localStorage.getItem("site-theme-css");
+        if (css) {
+          var style = document.createElement("style");
+          style.id = "dynamic-theme";
+          style.textContent = css;
+          document.head.appendChild(style);
+        }
       })();
     </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
