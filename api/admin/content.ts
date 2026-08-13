@@ -4,6 +4,26 @@ import { getBearerToken, verifyAdminToken } from "../lib/auth.js";
 import { loadSiteContent, saveSiteContent } from "../lib/contentStore.js";
 import { normalizeContent } from "../lib/normalizeContent.js";
 
+function parseSiteContentBody(req: VercelRequest): SiteContent {
+  const raw = req.body;
+
+  if (typeof raw === "string") {
+    return JSON.parse(raw) as SiteContent;
+  }
+
+  if (raw && typeof raw === "object") {
+    return raw as SiteContent;
+  }
+
+  throw new Error("Geçersiz kayıt verisi");
+}
+
+function assertTheme(content: SiteContent) {
+  if (!content?.theme?.dark?.accent || !content?.theme?.light?.accent) {
+    throw new Error("Tema verisi eksik");
+  }
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const token = getBearerToken(req);
 
@@ -23,7 +43,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === "PUT") {
     try {
-      const content = normalizeContent(req.body as SiteContent);
+      const parsed = parseSiteContentBody(req);
+      assertTheme(parsed);
+      const content = normalizeContent(parsed);
       const saved = await saveSiteContent(content);
       res.setHeader("Cache-Control", "no-store");
       return res.status(200).json(saved);

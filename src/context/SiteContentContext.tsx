@@ -1,7 +1,11 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { defaultContent } from "../data/defaultContent";
 import { normalizeContent } from "../data/normalizeContent";
-import { applyTheme, getCachedTheme } from "../lib/themeStorage";
+import {
+  applyTheme,
+  getCachedContent,
+  persistContentCache,
+} from "../lib/themeStorage";
 import type { SiteContent } from "../types/siteContent";
 
 interface SiteContentContextValue {
@@ -14,13 +18,14 @@ interface SiteContentContextValue {
 const SiteContentContext = createContext<SiteContentContextValue | null>(null);
 
 function getInitialContent(): SiteContent {
-  const cachedTheme = getCachedTheme();
-  if (!cachedTheme) return defaultContent;
+  return getCachedContent() ?? defaultContent;
+}
 
-  return normalizeContent({
-    ...defaultContent,
-    theme: cachedTheme,
-  });
+function syncContent(data: SiteContent) {
+  const normalized = normalizeContent(data);
+  persistContentCache(normalized);
+  applyTheme(normalized.theme);
+  return normalized;
 }
 
 export { applyTheme };
@@ -35,9 +40,8 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
         cache: "no-store",
       });
       if (response.ok) {
-        const data = normalizeContent((await response.json()) as SiteContent);
+        const data = syncContent((await response.json()) as SiteContent);
         setContent(data);
-        applyTheme(data.theme);
         setLoading(false);
         return;
       }
@@ -48,25 +52,23 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     try {
       const fallback = await fetch("/site-content.json");
       if (fallback.ok) {
-        const data = normalizeContent((await fallback.json()) as SiteContent);
+        const data = syncContent((await fallback.json()) as SiteContent);
         setContent(data);
-        applyTheme(data.theme);
       } else {
-        setContent(defaultContent);
-        applyTheme(defaultContent.theme);
+        const data = syncContent(defaultContent);
+        setContent(data);
       }
     } catch {
-      setContent(defaultContent);
-      applyTheme(defaultContent.theme);
+      const data = syncContent(defaultContent);
+      setContent(data);
     } finally {
       setLoading(false);
     }
   };
 
   const applySavedContent = (data: SiteContent) => {
-    const normalized = normalizeContent(data);
+    const normalized = syncContent(data);
     setContent(normalized);
-    applyTheme(normalized.theme);
   };
 
   useEffect(() => {
@@ -74,8 +76,9 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    if (loading) return;
     applyTheme(content.theme);
-  }, [content.theme]);
+  }, [content.theme, loading]);
 
   return (
     <SiteContentContext.Provider value={{ content, loading, refresh, applySavedContent }}>

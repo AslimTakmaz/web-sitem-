@@ -5,6 +5,7 @@ import { ThemeToggle } from "../../components/ThemeToggle/ThemeToggle";
 import { applyTheme, useSiteContent } from "../../context/SiteContentContext";
 import { defaultContent } from "../../data/defaultContent";
 import { normalizeContent } from "../../data/normalizeContent";
+import { getCachedContent, persistContentCache } from "../../lib/themeStorage";
 import type { Project, SiteContent, ThemePalette, ContentField } from "../../types/siteContent";
 import styles from "./Admin.module.css";
 
@@ -268,7 +269,7 @@ export function AdminPage() {
   const [token, setToken] = useState<string | null>(() => sessionStorage.getItem(TOKEN_KEY));
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
-  const [content, setContent] = useState<SiteContent>(defaultContent);
+  const [content, setContent] = useState<SiteContent>(() => getCachedContent() ?? defaultContent);
   const [tab, setTab] = useState<Tab>("general");
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [saving, setSaving] = useState(false);
@@ -300,7 +301,12 @@ export function AdminPage() {
         }
         return res.json() as Promise<SiteContent>;
       })
-      .then((data) => setContent(normalizeContent(data)))
+      .then((data) => {
+        const normalized = normalizeContent(data);
+        setContent(normalized);
+        applyTheme(normalized.theme);
+        persistContentCache(normalized);
+      })
       .catch((error) => {
         if (error instanceof Error && error.message === "Yetkisiz") return;
         showToast("İçerik yüklenemedi. Sayfayı yenileyip tekrar deneyin.", "error");
@@ -339,12 +345,21 @@ export function AdminPage() {
       light: { ...defaultContent.theme.light },
     };
 
-    setContent((prev) => ({
-      ...prev,
-      theme,
-    }));
+    setContent((prev) => {
+      const next = { ...prev, theme };
+      persistContentCache(next);
+      return next;
+    });
     applyTheme(theme);
     showToast("Renkler varsayılana sıfırlandı.", "success");
+  };
+
+  const updateTheme = (patch: (theme: SiteContent["theme"]) => SiteContent["theme"]) => {
+    setContent((prev) => {
+      const theme = patch(prev.theme);
+      applyTheme(theme);
+      return { ...prev, theme };
+    });
   };
 
   const handleSave = async () => {
@@ -373,7 +388,7 @@ export function AdminPage() {
       const saved = normalizeContent(result as SiteContent);
       setContent(saved);
       applySavedContent(saved);
-      applyTheme(saved.theme);
+      persistContentCache(saved);
       showToast("Değişiklikler kaydedildi.", "success");
     } catch {
       showToast("Kayıt sırasında hata oluştu.", "error");
@@ -997,14 +1012,12 @@ export function AdminPage() {
               <ThemeEditor
                 title="Koyu Tema"
                 palette={content.theme.dark}
-                onChange={(dark) => setContent((prev) => ({ ...prev, theme: { ...prev.theme, dark } }))}
+                onChange={(dark) => updateTheme((theme) => ({ ...theme, dark }))}
               />
               <ThemeEditor
                 title="Açık Tema"
                 palette={content.theme.light}
-                onChange={(light) =>
-                  setContent((prev) => ({ ...prev, theme: { ...prev.theme, light } }))
-                }
+                onChange={(light) => updateTheme((theme) => ({ ...theme, light }))}
               />
             </div>
           </div>

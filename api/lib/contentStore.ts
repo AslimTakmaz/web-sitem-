@@ -1,28 +1,22 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { getVercelOidcToken } from "@vercel/oidc";
-import { get, put } from "@vercel/blob";
+import { get, head, put } from "@vercel/blob";
 import type { SiteContent } from "../../src/types/siteContent";
 import { normalizeContent } from "./normalizeContent.js";
 
 const BLOB_PATHNAME = "portfolio/site-content.json";
+const ACCESS_MODES = ["private", "public"] as const;
 
-let preferredBlobAccess: "private" | "public" | null = null;
-
-function getAccessOrder(): ("private" | "public")[] {
-  if (preferredBlobAccess) {
-    const fallback = preferredBlobAccess === "private" ? "public" : "private";
-    return [preferredBlobAccess, fallback];
-  }
-
-  return ["private", "public"];
-}
+type BlobAccess = (typeof ACCESS_MODES)[number];
 
 type BlobAuthOptions = {
   token?: string;
   oidcToken?: string;
   storeId?: string;
 };
+
+let resolvedAccess: BlobAccess | null = null;
 
 function normalizeStoreId(storeId: string) {
   return storeId.startsWith("store_") ? storeId.slice("store_".length) : storeId;
@@ -35,6 +29,14 @@ function parseStoreIdFromToken(token: string) {
 
 function tokenMatchesStore(token: string, storeId: string) {
   return parseStoreIdFromToken(token) === normalizeStoreId(storeId);
+}
+
+function getConfiguredAccess(): BlobAccess | null {
+  const value = process.env.BLOB_STORE_ACCESS?.trim();
+  if (value === "private" || value === "public") {
+    return value;
+  }
+  return null;
 }
 
 async function resolveBlobAuthOptions(): Promise<BlobAuthOptions> {
@@ -69,7 +71,6 @@ async function resolveBlobAuthOptions(): Promise<BlobAuthOptions> {
   );
 }
 
-/** Yanlış env token'ının SDK tarafından fallback olarak kullanılmasını engeller. */
 async function withSafeBlobEnv<T>(auth: BlobAuthOptions, run: () => Promise<T>) {
   const savedToken = process.env.BLOB_READ_WRITE_TOKEN;
   const shouldHideToken =
@@ -91,57 +92,94 @@ async function withSafeBlobEnv<T>(auth: BlobAuthOptions, run: () => Promise<T>) 
   }
 }
 
+async function detectBlobAccess(auth: BlobAuthOptions): Promise<BlobAccess> {
+  const configured = getConfiguredAccess();
+  if (configured) {
+    return configured;
+  }
+
+  if (resolvedAccess) {
+    return resolvedAccess;
+  }
+
+  let newest: { access: BlobAccess; uploadedAt: number } | null = null;
+
+  for (const access of ACCESS_MODES) {
+    try {
+      const meta = await head(BLOB_PATHNAME, { access, ...auth });
+      const uploadedAt = meta.uploadedAt.getTime();
+
+      if (!newest || uploadedAt > newest.uploadedAt) {
+        newest = { access, uploadedAt };
+      }
+    } catch {
+      // Blob bu erişim modunda yok veya erişilemiyor
+    }
+  }
+
+  resolvedAccess = newest?.access ?? "private";
+  return resolvedAccess;
+}
+
+async function blobGetWithAccess(auth: BlobAuthOptions, access: BlobAccess) {
+  return get(BLOB_PATHNAME, { access, ...auth });
+}
+
+async function blobPutWithAccess(auth: BlobAuthOptions, access: BlobAccess, body: string) {
+  await put(BLOB_PATHNAME, body, {
+    access,
+    addRandomSuffix: false,
+    allowOverwrite: true,
+    contentType: "application/json",
+    ...auth,
+  });
+}
+
 async function blobGet() {
   const auth = await resolveBlobAuthOptions();
 
   return withSafeBlobEnv(auth, async () => {
-    for (const access of getAccessOrder()) {
-      try {
-        const result = await get(BLOB_PATHNAME, { access, ...auth });
-        preferredBlobAccess = access;
-        return result;
-      } catch (error) {
-        const message = error instanceof Error ? error.message : "";
-        const isLast = access === "public";
-        const isAccessDenied = message.includes("Access denied");
+    const primaryAccess = await detectBlobAccess(auth);
 
-        if (isLast || !isAccessDenied) {
-          throw error;
-        }
+    try {
+      const result = await blobGetWithAccess(auth, primaryAccess);
+      resolvedAccess = primaryAccess;
+      return result;
+    } catch (primaryError) {
+      const fallbackAccess: BlobAccess = primaryAccess === "private" ? "public" : "private";
+
+      try {
+        const result = await blobGetWithAccess(auth, fallbackAccess);
+        resolvedAccess = fallbackAccess;
+        return result;
+      } catch {
+        throw primaryError;
       }
     }
-
-    return undefined;
   });
 }
 
-async function blobPut(body: string) {
+async function blobPut(body: string): Promise<BlobAccess> {
   const auth = await resolveBlobAuthOptions();
 
-  await withSafeBlobEnv(auth, async () => {
-    let lastError: unknown;
+  return withSafeBlobEnv(auth, async () => {
+    const primaryAccess = await detectBlobAccess(auth);
 
-    for (const access of getAccessOrder()) {
+    try {
+      await blobPutWithAccess(auth, primaryAccess, body);
+      resolvedAccess = primaryAccess;
+      return primaryAccess;
+    } catch (primaryError) {
+      const fallbackAccess: BlobAccess = primaryAccess === "private" ? "public" : "private";
+
       try {
-        await put(BLOB_PATHNAME, body, {
-          access,
-          addRandomSuffix: false,
-          allowOverwrite: true,
-          contentType: "application/json",
-          ...auth,
-        });
-        preferredBlobAccess = access;
-        return;
-      } catch (error) {
-        lastError = error;
-        const message = error instanceof Error ? error.message : "";
-        if (!message.includes("Access denied") || access === "public") {
-          throw error;
-        }
+        await blobPutWithAccess(auth, fallbackAccess, body);
+        resolvedAccess = fallbackAccess;
+        return fallbackAccess;
+      } catch {
+        throw primaryError;
       }
     }
-
-    throw lastError;
   });
 }
 

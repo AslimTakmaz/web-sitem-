@@ -1,7 +1,10 @@
 import type { SiteContent } from "../types/siteContent";
+import { defaultContent } from "../data/defaultContent";
+import { normalizeContent } from "../data/normalizeContent";
 
 export const THEME_STORAGE_KEY = "site-theme";
 export const THEME_CSS_STORAGE_KEY = "site-theme-css";
+export const CONTENT_CACHE_KEY = "site-content-cache";
 
 function hexToRgba(hex: string, alpha: number) {
   const normalized = hex.replace("#", "");
@@ -38,17 +41,33 @@ export function buildThemeCss(theme: SiteContent["theme"]) {
 }
 
 export function getCachedTheme(): SiteContent["theme"] | null {
+  const cachedContent = getCachedContent();
+  return cachedContent?.theme ?? null;
+}
+
+export function getCachedContent(): SiteContent | null {
   try {
-    const raw = localStorage.getItem(THEME_STORAGE_KEY);
+    const raw = localStorage.getItem(CONTENT_CACHE_KEY);
     if (!raw) return null;
-
-    const parsed = JSON.parse(raw) as SiteContent["theme"];
-    if (!parsed?.dark || !parsed?.light) return null;
-
-    return parsed;
+    return normalizeContent(JSON.parse(raw) as SiteContent);
   } catch {
     return null;
   }
+}
+
+export function persistContentCache(content: SiteContent) {
+  const normalized = normalizeContent(content);
+  const css = buildThemeCss(normalized.theme);
+
+  try {
+    localStorage.setItem(CONTENT_CACHE_KEY, JSON.stringify(normalized));
+    localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(normalized.theme));
+    localStorage.setItem(THEME_CSS_STORAGE_KEY, css);
+  } catch {
+    // localStorage dolu veya kapalı olabilir
+  }
+
+  return normalized;
 }
 
 export function persistTheme(theme: SiteContent["theme"]) {
@@ -75,4 +94,8 @@ export function applyTheme(theme: SiteContent["theme"]) {
 
   styleEl.textContent = css;
   document.head.appendChild(styleEl);
+}
+
+export function getBootstrapTheme() {
+  return getCachedTheme() ?? defaultContent.theme;
 }
