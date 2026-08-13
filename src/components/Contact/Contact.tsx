@@ -73,7 +73,6 @@ export function Contact() {
       <div className={styles.container}>
         <div className={styles.grid}>
           <div className={styles.info}>
-            <p className={styles.sectionLabel}>İletişim</p>
             <h2 className={styles.sectionTitle}>Birlikte Çalışalım</h2>
             <p className={styles.intro}>{intro}</p>
 
