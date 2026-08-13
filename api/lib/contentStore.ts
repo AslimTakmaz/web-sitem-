@@ -7,6 +7,17 @@ import { normalizeContent } from "./normalizeContent.js";
 
 const BLOB_PATHNAME = "portfolio/site-content.json";
 
+let preferredBlobAccess: "private" | "public" | null = null;
+
+function getAccessOrder(): ("private" | "public")[] {
+  if (preferredBlobAccess) {
+    const fallback = preferredBlobAccess === "private" ? "public" : "private";
+    return [preferredBlobAccess, fallback];
+  }
+
+  return ["private", "public"];
+}
+
 type BlobAuthOptions = {
   token?: string;
   oidcToken?: string;
@@ -84,9 +95,11 @@ async function blobGet() {
   const auth = await resolveBlobAuthOptions();
 
   return withSafeBlobEnv(auth, async () => {
-    for (const access of ["private", "public"] as const) {
+    for (const access of getAccessOrder()) {
       try {
-        return await get(BLOB_PATHNAME, { access, ...auth });
+        const result = await get(BLOB_PATHNAME, { access, ...auth });
+        preferredBlobAccess = access;
+        return result;
       } catch (error) {
         const message = error instanceof Error ? error.message : "";
         const isLast = access === "public";
@@ -108,7 +121,7 @@ async function blobPut(body: string) {
   await withSafeBlobEnv(auth, async () => {
     let lastError: unknown;
 
-    for (const access of ["private", "public"] as const) {
+    for (const access of getAccessOrder()) {
       try {
         await put(BLOB_PATHNAME, body, {
           access,
@@ -117,6 +130,7 @@ async function blobPut(body: string) {
           contentType: "application/json",
           ...auth,
         });
+        preferredBlobAccess = access;
         return;
       } catch (error) {
         lastError = error;
@@ -151,6 +165,20 @@ export async function loadSiteContent(): Promise<SiteContent> {
   return normalizeContent(readDefaultContent());
 }
 
-export async function saveSiteContent(content: SiteContent) {
-  await blobPut(JSON.stringify(content, null, 2));
+export async function saveSiteContent(content: SiteContent): Promise<SiteContent> {
+  const normalized = normalizeContent(content);
+  const body = JSON.stringify(normalized, null, 2);
+  await blobPut(body);
+
+  try {
+    const result = await blobGet();
+    if (result?.stream) {
+      const text = await new Response(result.stream).text();
+      return normalizeContent(JSON.parse(text) as SiteContent);
+    }
+  } catch {
+    // Doğrulama okuması başarısız olsa da kaydedilen normalize içeriği döndür
+  }
+
+  return normalized;
 }

@@ -2,6 +2,7 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import type { SiteContent } from "../../src/types/siteContent";
 import { getBearerToken, verifyAdminToken } from "../lib/auth.js";
 import { loadSiteContent, saveSiteContent } from "../lib/contentStore.js";
+import { normalizeContent } from "../lib/normalizeContent.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const token = getBearerToken(req);
@@ -21,9 +22,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === "PUT") {
     try {
-      const content = req.body as SiteContent;
-      await saveSiteContent(content);
-      return res.status(200).json({ success: true });
+      const content = normalizeContent(req.body as SiteContent);
+      const saved = await saveSiteContent(content);
+      res.setHeader("Cache-Control", "no-store");
+      return res.status(200).json(saved);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Kayıt başarısız";

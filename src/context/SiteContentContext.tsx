@@ -7,6 +7,7 @@ interface SiteContentContextValue {
   content: SiteContent;
   loading: boolean;
   refresh: () => Promise<void>;
+  applySavedContent: (data: SiteContent) => void;
 }
 
 const SiteContentContext = createContext<SiteContentContextValue | null>(null);
@@ -58,7 +59,9 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
 
   const refresh = async () => {
     try {
-      const response = await fetch("/api/content");
+      const response = await fetch(`/api/content?_=${Date.now()}`, {
+        cache: "no-store",
+      });
       if (response.ok) {
         const data = normalizeContent((await response.json()) as SiteContent);
         setContent(data);
@@ -88,6 +91,12 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const applySavedContent = (data: SiteContent) => {
+    const normalized = normalizeContent(data);
+    setContent(normalized);
+    applyTheme(normalized.theme);
+  };
+
   useEffect(() => {
     refresh();
   }, []);
@@ -97,7 +106,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
   }, [content.theme]);
 
   return (
-    <SiteContentContext.Provider value={{ content, loading, refresh }}>
+    <SiteContentContext.Provider value={{ content, loading, refresh, applySavedContent }}>
       {children}
     </SiteContentContext.Provider>
   );

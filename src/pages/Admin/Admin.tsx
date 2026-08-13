@@ -264,7 +264,7 @@ function ThemeEditor({
 }
 
 export function AdminPage() {
-  const { refresh } = useSiteContent();
+  const { refresh, applySavedContent } = useSiteContent();
   const [token, setToken] = useState<string | null>(() => sessionStorage.getItem(TOKEN_KEY));
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
@@ -359,15 +359,25 @@ export function AdminPage() {
         body: JSON.stringify(content),
       });
 
-      const result = await response.json();
+      const result = (await response.json()) as SiteContent | { error?: string };
 
       if (!response.ok) {
-        showToast(result.error ?? "Kayıt başarısız", "error");
+        showToast("error" in result ? result.error ?? "Kayıt başarısız" : "Kayıt başarısız", "error");
         return;
       }
 
+      const saved = normalizeContent(result as SiteContent);
+      setContent(saved);
+      applySavedContent(saved);
       showToast("Değişiklikler kaydedildi.", "success");
-      await refresh();
+
+      try {
+        await refresh();
+      } catch {
+        // Kayıt başarılı; arka plan senkronu başarısız olsa da kaydedilen içeriği koru
+      }
+
+      applySavedContent(saved);
     } catch {
       showToast("Kayıt sırasında hata oluştu.", "error");
     } finally {
