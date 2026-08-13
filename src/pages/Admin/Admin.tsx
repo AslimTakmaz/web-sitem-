@@ -326,6 +326,17 @@ export function AdminPage() {
     }
   };
 
+  const resetTheme = () => {
+    setContent((prev) => ({
+      ...prev,
+      theme: {
+        dark: { ...defaultContent.theme.dark },
+        light: { ...defaultContent.theme.light },
+      },
+    }));
+    showToast("Renkler varsayılana sıfırlandı.", "success");
+  };
+
   const handleSave = async () => {
     if (!token) return;
 
@@ -962,19 +973,26 @@ export function AdminPage() {
         )}
 
         {tab === "colors" && (
-          <div className={styles.colorGrid}>
-            <ThemeEditor
-              title="Koyu Tema"
-              palette={content.theme.dark}
-              onChange={(dark) => setContent((prev) => ({ ...prev, theme: { ...prev.theme, dark } }))}
-            />
-            <ThemeEditor
-              title="Açık Tema"
-              palette={content.theme.light}
-              onChange={(light) =>
-                setContent((prev) => ({ ...prev, theme: { ...prev.theme, light } }))
-              }
-            />
+          <div className={styles.colorsSection}>
+            <div className={styles.colorsHeader}>
+              <button type="button" className={styles.secondaryBtn} onClick={resetTheme}>
+                Sıfırla
+              </button>
+            </div>
+            <div className={styles.colorGrid}>
+              <ThemeEditor
+                title="Koyu Tema"
+                palette={content.theme.dark}
+                onChange={(dark) => setContent((prev) => ({ ...prev, theme: { ...prev.theme, dark } }))}
+              />
+              <ThemeEditor
+                title="Açık Tema"
+                palette={content.theme.light}
+                onChange={(light) =>
+                  setContent((prev) => ({ ...prev, theme: { ...prev.theme, light } }))
+                }
+              />
+            </div>
           </div>
         )}
           </div>
