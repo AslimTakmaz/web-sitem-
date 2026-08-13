@@ -20,14 +20,14 @@ function hexToRgba(hex: string, alpha: number) {
 
 export function buildThemeCss(theme: SiteContent["theme"]) {
   return `
-    [data-theme="dark"] {
+    html[data-theme="dark"] {
       --color-accent: ${theme.dark.accent};
       --color-accent-hover: ${theme.dark.accentHover};
       --color-baby-blue: ${theme.dark.babyBlue};
       --color-label: ${theme.dark.label};
       --gradient-line-end: ${hexToRgba(theme.dark.babyBlue, 0.12)};
     }
-    [data-theme="light"] {
+    html[data-theme="light"] {
       --color-accent: ${theme.light.accent};
       --color-accent-hover: ${theme.light.accentHover};
       --color-baby-blue: ${theme.light.babyBlue};
@@ -71,8 +71,8 @@ export function applyTheme(theme: SiteContent["theme"]) {
   if (!styleEl) {
     styleEl = document.createElement("style");
     styleEl.id = "dynamic-theme";
-    document.head.appendChild(styleEl);
   }
 
   styleEl.textContent = css;
+  document.head.appendChild(styleEl);
 }
