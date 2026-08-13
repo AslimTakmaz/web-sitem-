@@ -1,7 +1,8 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { Logo } from "../../components/Logo/Logo";
-import { useSiteContent } from "../../context/SiteContentContext";
+import { ThemeToggle } from "../../components/ThemeToggle/ThemeToggle";
+import { applyTheme, useSiteContent } from "../../context/SiteContentContext";
 import { defaultContent } from "../../data/defaultContent";
 import { normalizeContent } from "../../data/normalizeContent";
 import type { Project, SiteContent, ThemePalette, ContentField } from "../../types/siteContent";
@@ -275,6 +276,11 @@ export function AdminPage() {
   const showToast = (message: string, type: "success" | "error") => {
     setToast({ message, type });
   };
+
+  useEffect(() => {
+    if (!token) return;
+    applyTheme(content.theme);
+  }, [token, content.theme]);
 
   useEffect(() => {
     if (!token) return;
@@ -975,6 +981,7 @@ export function AdminPage() {
         {tab === "colors" && (
           <div className={styles.colorsSection}>
             <div className={styles.colorsHeader}>
+              <ThemeToggle />
               <button type="button" className={styles.secondaryBtn} onClick={resetTheme}>
                 Sıfırla
               </button>

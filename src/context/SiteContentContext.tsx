@@ -11,7 +11,7 @@ interface SiteContentContextValue {
 
 const SiteContentContext = createContext<SiteContentContextValue | null>(null);
 
-function applyTheme(theme: SiteContent["theme"]) {
+export function applyTheme(theme: SiteContent["theme"]) {
   let styleEl = document.getElementById("dynamic-theme") as HTMLStyleElement | null;
   if (!styleEl) {
     styleEl = document.createElement("style");
