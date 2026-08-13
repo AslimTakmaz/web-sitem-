@@ -8,7 +8,6 @@ export const defaultContent: SiteContent = {
     tagline:
       "Modern web teknolojileri kullanarak kullanıcı odaklı web uygulamaları geliştiriyorum.",
     statusLine: "Staj ve iş birliği fırsatlarına açığım",
-    cvUrl: "",
     social: {
       github: "https://github.com/AslimTakmaz",
       linkedin:

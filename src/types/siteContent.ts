@@ -57,7 +57,6 @@ export interface PersonalData {
   tagline: string;
   statusLine?: string;
   profileImage?: string;
-  cvUrl?: string;
   social: {
     github: string;
     linkedin: string;

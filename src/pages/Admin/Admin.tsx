@@ -14,7 +14,6 @@ import type { SiteContent } from "../../types/siteContent";
 import {
   IconAbout,
   IconColors,
-  IconCv,
   IconDashboard,
   IconExperience,
   IconLogout,
@@ -28,7 +27,6 @@ import {
 import {
   AboutSection,
   ColorsSection,
-  CvSection,
   DashboardSection,
   ExperienceSection,
   MessagesSection,
@@ -51,7 +49,6 @@ type Tab =
   | "projects"
   | "skills"
   | "messages"
-  | "cv"
   | "social"
   | "colors"
   | "seo"
@@ -70,7 +67,6 @@ const TABS: {
   { id: "projects", label: "Projeler", description: "Proje listesi ve kapak görselleri", icon: <IconProjects /> },
   { id: "skills", label: "Yetenekler", description: "Teknik beceriler ve seviyeler", icon: <IconSkills /> },
   { id: "messages", label: "Mesajlar", description: "Gelen iletişim mesajları", icon: <IconMessages />, badge: 0 },
-  { id: "cv", label: "CV", description: "Özgeçmiş dosyası yönetimi", icon: <IconCv /> },
   { id: "social", label: "Sosyal Medya", description: "GitHub, LinkedIn ve diğer linkler", icon: <IconSocial /> },
   { id: "colors", label: "Renkler", description: "Açık ve koyu tema renkleri", icon: <IconColors /> },
   { id: "seo", label: "SEO", description: "Arama motoru optimizasyonu", icon: <IconSeo /> },
@@ -310,8 +306,6 @@ export function AdminPage() {
         return <SkillsSection {...sectionProps} />;
       case "messages":
         return <MessagesSection />;
-      case "cv":
-        return <CvSection {...sectionProps} />;
       case "social":
         return <SocialSection {...sectionProps} />;
       case "colors":

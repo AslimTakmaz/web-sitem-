@@ -885,24 +885,6 @@ html[data-theme="light"] .shell {
   border-top: 1px solid var(--admin-border);
 }
 
-/* CV */
-.cvPreview {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  padding: 0.875rem;
-  background: var(--admin-bg);
-  border: 1px solid var(--admin-border);
-  border-radius: 8px;
-}
-
-.cvFileName {
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
 /* Status & toast */
 .statusBanner {
   margin: 0 1.5rem;

@@ -51,15 +51,6 @@ export function IconMessages({ className }: IconProps) {
   );
 }
 
-export function IconCv({ className }: IconProps) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden="true">
-      <path d="M8 3h8l4 4v14H4V3h4z" strokeLinejoin="round" />
-      <path d="M16 3v4h4M8 12h8M8 16h5" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 export function IconSocial({ className }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden="true">

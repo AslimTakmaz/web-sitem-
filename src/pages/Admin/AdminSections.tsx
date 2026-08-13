@@ -681,41 +681,6 @@ export function MessagesSection() {
   );
 }
 
-export function CvSection({ content, setContent }: SectionProps) {
-  return (
-    <div className={styles.stack}>
-      <Card title="CV Dosyası">
-        {content.personal.cvUrl ? (
-          <div className={styles.cvPreview}>
-            <p className={styles.cvFileName}>{content.personal.cvUrl.split("/").pop()}</p>
-            <a href={content.personal.cvUrl} target="_blank" rel="noopener noreferrer" className={styles.secondaryBtn}>
-              İndir / Görüntüle
-            </a>
-          </div>
-        ) : (
-          <p className={styles.emptyText}>Henüz CV yüklenmedi.</p>
-        )}
-        <Field label="CV URL (PDF linki)" fullWidth>
-          <input
-            className={styles.input}
-            value={content.personal.cvUrl ?? ""}
-            onChange={(e) =>
-              setContent((prev) => ({
-                ...prev,
-                personal: { ...prev.personal, cvUrl: e.target.value || undefined },
-              }))
-            }
-            placeholder="https://... veya /cv.pdf"
-          />
-        </Field>
-        <p className={styles.fieldHint}>
-          PDF dosyasını <code>public/cv.pdf</code> olarak ekleyip <code>/cv.pdf</code> yazabilirsin.
-        </p>
-      </Card>
-    </div>
-  );
-}
-
 export function SocialSection({ content, setContent }: SectionProps) {
   const { personal } = content;
 
