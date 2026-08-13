@@ -15,6 +15,10 @@ export const defaultContent: SiteContent = {
     },
     contact: {
       email: "takmazaslim096@gmail.com",
+      phone: "",
+      location: "Türkiye",
+      intro:
+        "Yeni projelere ve iş birliği fırsatlarına her zaman açığım. Aklınızda bir proje mi var? Konuşalım!",
     },
     generalExtras: [],
     about: {
@@ -110,6 +114,7 @@ export const defaultContent: SiteContent = {
       "Aslım Takmaz — Software Development Intern. Modern web teknolojileri ile kullanıcı odaklı web uygulamaları geliştiriyorum.",
     keywords: "Aslım Takmaz, yazılım geliştirici, portföy, React, TypeScript",
   },
+  messages: [],
   theme: {
     dark: {
       accent: "#2dd4bf",

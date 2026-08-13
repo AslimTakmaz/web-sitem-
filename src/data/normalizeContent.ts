@@ -16,7 +16,6 @@ export function normalizeContent(data: SiteContent): SiteContent {
         ...defaultContent.personal.contact,
         ...data.personal?.contact,
       },
-      generalExtras: data.personal?.generalExtras ?? [],
       about: {
         ...defaultContent.personal.about,
         ...data.personal?.about,
@@ -41,6 +40,7 @@ export function normalizeContent(data: SiteContent): SiteContent {
       ...defaultContent.seo,
       ...data.seo,
     },
+    messages: data.messages ?? defaultContent.messages,
     theme: {
       dark: { ...defaultContent.theme.dark, ...data.theme?.dark },
       light: { ...defaultContent.theme.light, ...data.theme?.light },

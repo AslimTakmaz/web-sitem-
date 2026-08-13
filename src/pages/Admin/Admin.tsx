@@ -59,14 +59,13 @@ const TABS: {
   label: string;
   description: string;
   icon: React.ReactNode;
-  badge?: number;
 }[] = [
   { id: "dashboard", label: "Genel", description: "Dashboard ve özet istatistikler", icon: <IconDashboard /> },
   { id: "about", label: "Hakkımda", description: "Biyografi, eğitim ve ilgi alanları", icon: <IconAbout /> },
   { id: "experience", label: "Deneyimler", description: "İş, staj ve eğitim geçmişi", icon: <IconExperience /> },
   { id: "projects", label: "Projeler", description: "Proje listesi ve kapak görselleri", icon: <IconProjects /> },
   { id: "skills", label: "Yetenekler", description: "Teknik beceriler ve seviyeler", icon: <IconSkills /> },
-  { id: "messages", label: "Mesajlar", description: "Gelen iletişim mesajları", icon: <IconMessages />, badge: 0 },
+  { id: "messages", label: "Mesajlar", description: "Gelen iletişim mesajları", icon: <IconMessages /> },
   { id: "social", label: "Sosyal Medya", description: "GitHub, LinkedIn ve diğer linkler", icon: <IconSocial /> },
   { id: "colors", label: "Renkler", description: "Açık ve koyu tema renkleri", icon: <IconColors /> },
   { id: "seo", label: "SEO", description: "Arama motoru optimizasyonu", icon: <IconSeo /> },
@@ -291,6 +290,7 @@ export function AdminPage() {
 
   const activeTab = TABS.find((item) => item.id === tab) ?? TABS[0];
   const sectionProps = { content, setContent };
+  const unreadMessages = content.messages?.filter((msg) => !msg.read).length ?? 0;
 
   const renderSection = () => {
     switch (tab) {
@@ -305,7 +305,7 @@ export function AdminPage() {
       case "skills":
         return <SkillsSection {...sectionProps} />;
       case "messages":
-        return <MessagesSection />;
+        return <MessagesSection {...sectionProps} />;
       case "social":
         return <SocialSection {...sectionProps} />;
       case "colors":
@@ -329,7 +329,7 @@ export function AdminPage() {
         </div>
 
         <nav className={styles.sidebarNav} aria-label="Admin menüsü">
-          {TABS.map(({ id, label, icon, badge }) => (
+          {TABS.map(({ id, label, icon }) => (
             <button
               key={id}
               type="button"
@@ -338,8 +338,8 @@ export function AdminPage() {
             >
               {icon}
               <span>{label}</span>
-              {badge !== undefined && badge > 0 && (
-                <span className={styles.badge}>{badge}</span>
+              {id === "messages" && unreadMessages > 0 && (
+                <span className={styles.navBadge}>{unreadMessages}</span>
               )}
             </button>
           ))}

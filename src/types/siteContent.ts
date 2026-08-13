@@ -28,6 +28,16 @@ export interface SeoSettings {
   keywords: string;
 }
 
+export interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  read: boolean;
+  createdAt: string;
+}
+
 export interface Project {
   id: string;
   name: string;
@@ -63,6 +73,9 @@ export interface PersonalData {
   };
   contact: {
     email: string;
+    phone?: string;
+    location?: string;
+    intro?: string;
   };
   generalExtras: ContentField[];
   about: {
@@ -85,6 +98,7 @@ export interface SiteContent {
   skills: Skill[];
   experiences: Experience[];
   seo: SeoSettings;
+  messages: ContactMessage[];
   theme: {
     dark: ThemePalette;
     light: ThemePalette;

@@ -54,6 +54,7 @@ export function normalizeContent(data: SiteContent): SiteContent {
       ...defaults.seo,
       ...data.seo,
     },
+    messages: data.messages ?? defaults.messages,
     theme: {
       dark: { ...defaults.theme.dark, ...data.theme?.dark },
       light: { ...defaults.theme.light, ...data.theme?.light },

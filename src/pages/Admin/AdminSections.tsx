@@ -163,11 +163,12 @@ export function DashboardSection({ content }: SectionProps) {
   }, [content]);
 
   const activities = getRecentActivities();
+  const messageCount = content.messages?.length ?? 0;
 
   const stats = [
     { label: "Toplam Ziyaretçi", value: "—", hint: "Vercel Analytics ile", trend: null },
     { label: "Toplam Proje", value: String(content.projects.length), hint: null, trend: null },
-    { label: "Gelen Mesaj", value: "0", hint: "Form eklendiğinde", trend: null },
+    { label: "Gelen Mesaj", value: String(messageCount), hint: null, trend: null },
     { label: "Teknoloji", value: String(techCount), hint: null, trend: null },
   ];
 
@@ -665,18 +666,93 @@ export function SkillsSection({ content, setContent }: SectionProps) {
   );
 }
 
-export function MessagesSection() {
+export function MessagesSection({ content, setContent }: SectionProps) {
+  const [filter, setFilter] = useState<"all" | "unread" | "read">("all");
+
+  const messages = content.messages ?? [];
+  const filtered = messages.filter((msg) => {
+    if (filter === "unread") return !msg.read;
+    if (filter === "read") return msg.read;
+    return true;
+  });
+
+  const markRead = (id: string) => {
+    setContent((prev) => ({
+      ...prev,
+      messages: (prev.messages ?? []).map((msg) =>
+        msg.id === id ? { ...msg, read: true } : msg,
+      ),
+    }));
+  };
+
+  const removeMessage = (id: string) => {
+    if (!window.confirm("Bu mesajı silmek istediğine emin misin?")) return;
+    setContent((prev) => ({
+      ...prev,
+      messages: (prev.messages ?? []).filter((msg) => msg.id !== id),
+    }));
+  };
+
   return (
     <div className={styles.stack}>
       <div className={styles.tabs}>
-        <button type="button" className={`${styles.tabBtn} ${styles.tabBtnActive}`}>Tümü</button>
-        <button type="button" className={styles.tabBtn} disabled>Okunmamış</button>
-        <button type="button" className={styles.tabBtn} disabled>Okundu</button>
+        <button
+          type="button"
+          className={`${styles.tabBtn} ${filter === "all" ? styles.tabBtnActive : ""}`}
+          onClick={() => setFilter("all")}
+        >
+          Tümü ({messages.length})
+        </button>
+        <button
+          type="button"
+          className={`${styles.tabBtn} ${filter === "unread" ? styles.tabBtnActive : ""}`}
+          onClick={() => setFilter("unread")}
+        >
+          Okunmamış ({messages.filter((m) => !m.read).length})
+        </button>
+        <button
+          type="button"
+          className={`${styles.tabBtn} ${filter === "read" ? styles.tabBtnActive : ""}`}
+          onClick={() => setFilter("read")}
+        >
+          Okundu ({messages.filter((m) => m.read).length})
+        </button>
       </div>
-      <div className={styles.emptyState}>
-        <p>Henüz mesaj yok.</p>
-        <p className={styles.emptyHint}>İletişim formu eklendiğinde gelen mesajlar burada listelenecek.</p>
-      </div>
+
+      {filtered.length === 0 ? (
+        <div className={styles.emptyState}>
+          <p>Henüz mesaj yok.</p>
+          <p className={styles.emptyHint}>Site iletişim formundan gelen mesajlar burada görünür.</p>
+        </div>
+      ) : (
+        <ul className={styles.messageList}>
+          {filtered.map((msg) => (
+            <li key={msg.id} className={`${styles.messageItem} ${msg.read ? styles.messageRead : ""}`}>
+              <div className={styles.messageHeader}>
+                <div>
+                  <strong>{msg.name}</strong>
+                  <span className={styles.messageEmail}>{msg.email}</span>
+                </div>
+                <time className={styles.messageTime}>
+                  {new Date(msg.createdAt).toLocaleString("tr-TR")}
+                </time>
+              </div>
+              <p className={styles.messageSubject}>{msg.subject}</p>
+              <p className={styles.messageBody}>{msg.message}</p>
+              <div className={styles.messageActions}>
+                {!msg.read && (
+                  <button type="button" className={styles.secondaryBtnSmall} onClick={() => markRead(msg.id)}>
+                    Okundu işaretle
+                  </button>
+                )}
+                <button type="button" className={styles.iconBtn} onClick={() => removeMessage(msg.id)} aria-label="Sil">
+                  <IconTrash />
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
@@ -873,7 +949,66 @@ export function SettingsSection({ content, setContent }: SectionProps) {
         <input className={styles.input} value={personal.statusLine ?? ""} onChange={(e) => setContent((prev) => ({ ...prev, personal: { ...prev.personal, statusLine: e.target.value || undefined } }))} placeholder="Staj arıyorum..." />
       </Field>
       <Field label="E-posta">
-        <input className={styles.input} value={personal.contact.email} onChange={(e) => setContent((prev) => ({ ...prev, personal: { ...prev.personal, contact: { email: e.target.value } } }))} />
+        <input
+          className={styles.input}
+          value={personal.contact.email}
+          onChange={(e) =>
+            setContent((prev) => ({
+              ...prev,
+              personal: {
+                ...prev.personal,
+                contact: { ...prev.personal.contact, email: e.target.value },
+              },
+            }))
+          }
+        />
+      </Field>
+      <Field label="Telefon">
+        <input
+          className={styles.input}
+          value={personal.contact.phone ?? ""}
+          onChange={(e) =>
+            setContent((prev) => ({
+              ...prev,
+              personal: {
+                ...prev.personal,
+                contact: { ...prev.personal.contact, phone: e.target.value || undefined },
+              },
+            }))
+          }
+          placeholder="+90 5xx xxx xx xx"
+        />
+      </Field>
+      <Field label="Konum">
+        <input
+          className={styles.input}
+          value={personal.contact.location ?? ""}
+          onChange={(e) =>
+            setContent((prev) => ({
+              ...prev,
+              personal: {
+                ...prev.personal,
+                contact: { ...prev.personal.contact, location: e.target.value || undefined },
+              },
+            }))
+          }
+          placeholder="İstanbul, Türkiye"
+        />
+      </Field>
+      <Field label="İletişim Metni" fullWidth>
+        <textarea
+          className={styles.textarea}
+          value={personal.contact.intro ?? ""}
+          onChange={(e) =>
+            setContent((prev) => ({
+              ...prev,
+              personal: {
+                ...prev.personal,
+                contact: { ...prev.personal.contact, intro: e.target.value || undefined },
+              },
+            }))
+          }
+        />
       </Field>
       <Field label="Site URL" fullWidth>
         <input className={styles.input} value={personal.siteUrl} onChange={(e) => setContent((prev) => ({ ...prev, personal: { ...prev.personal, siteUrl: e.target.value } }))} />

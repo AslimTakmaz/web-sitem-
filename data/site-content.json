@@ -10,7 +10,10 @@
       "linkedin": "https://www.linkedin.com/in/asl%C4%B1m-takmaz-38a199390/"
     },
     "contact": {
-      "email": "takmazaslim096@gmail.com"
+      "email": "takmazaslim096@gmail.com",
+      "phone": "",
+      "location": "Türkiye",
+      "intro": "Yeni projelere ve iş birliği fırsatlarına her zaman açığım. Aklınızda bir proje mi var? Konuşalım!"
     },
     "generalExtras": [],
     "about": {
@@ -140,6 +143,7 @@
     "description": "Aslım Takmaz — Software Development Intern. Modern web teknolojileri ile kullanıcı odaklı web uygulamaları geliştiriyorum.",
     "keywords": "Aslım Takmaz, yazılım geliştirici, portföy, React, TypeScript"
   },
+  "messages": [],
   "theme": {
     "dark": {
       "accent": "#2dd4bf",
