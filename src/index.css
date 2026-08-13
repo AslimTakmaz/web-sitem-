@@ -33,24 +33,24 @@
 [data-theme="light"] {
   color-scheme: light;
 
-  --color-bg: #dde3ea;
-  --color-bg-secondary: rgba(232, 237, 243, 0.9);
-  --color-bg-elevated: rgba(236, 241, 246, 0.94);
-  --color-card-bg: rgba(234, 239, 245, 0.92);
-  --color-tag-bg: rgba(228, 234, 241, 0.95);
-  --color-input-bg: rgba(230, 236, 243, 0.97);
-  --color-border: #c5d0dc;
-  --color-border-hover: #aab9c9;
+  --color-bg: #cfd6de;
+  --color-bg-secondary: rgba(218, 225, 233, 0.92);
+  --color-bg-elevated: rgba(222, 229, 236, 0.94);
+  --color-card-bg: rgba(220, 227, 234, 0.93);
+  --color-tag-bg: rgba(214, 222, 230, 0.96);
+  --color-input-bg: rgba(216, 224, 232, 0.97);
+  --color-border: #b8c4d0;
+  --color-border-hover: #9faebf;
   --color-text: #1e293b;
   --color-text-muted: #5c6b7f;
   --color-accent: #0d9488;
   --color-accent-hover: #0f766e;
   --color-baby-blue: #14b8a6;
   --color-label: #0d9488;
-  --color-navbar-bg: rgba(232, 237, 243, 0.88);
-  --color-logo-mark-bg: rgba(255, 255, 255, 0.42);
+  --color-navbar-bg: rgba(218, 225, 233, 0.9);
+  --color-logo-mark-bg: rgba(255, 255, 255, 0.28);
   --color-overlay: rgba(15, 23, 42, 0.45);
-  --color-bg-pattern-opacity: 0.32;
+  --color-bg-pattern-opacity: 0.22;
   --color-bg-pattern-size: cover;
   --color-bg-pattern-position: center center;
   --color-bg-glow: none;
@@ -118,7 +118,7 @@ body::after {
 }
 
 [data-theme="light"] body::after {
-  filter: invert(1) brightness(0.78) contrast(0.92);
+  filter: invert(1) brightness(0.66) contrast(0.88);
 }
 
 #root {
