@@ -14,6 +14,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "GET") {
     try {
       const content = await loadSiteContent();
+      res.setHeader("Cache-Control", "no-store, max-age=0");
       return res.status(200).json(content);
     } catch {
       return res.status(500).json({ error: "İçerik yüklenemedi" });

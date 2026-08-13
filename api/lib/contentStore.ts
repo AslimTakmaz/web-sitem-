@@ -169,16 +169,5 @@ export async function saveSiteContent(content: SiteContent): Promise<SiteContent
   const normalized = normalizeContent(content);
   const body = JSON.stringify(normalized, null, 2);
   await blobPut(body);
-
-  try {
-    const result = await blobGet();
-    if (result?.stream) {
-      const text = await new Response(result.stream).text();
-      return normalizeContent(JSON.parse(text) as SiteContent);
-    }
-  } catch {
-    // Doğrulama okuması başarısız olsa da kaydedilen normalize içeriği döndür
-  }
-
   return normalized;
 }

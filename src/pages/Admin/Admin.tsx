@@ -264,7 +264,7 @@ function ThemeEditor({
 }
 
 export function AdminPage() {
-  const { refresh, applySavedContent } = useSiteContent();
+  const { applySavedContent } = useSiteContent();
   const [token, setToken] = useState<string | null>(() => sessionStorage.getItem(TOKEN_KEY));
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
@@ -285,7 +285,8 @@ export function AdminPage() {
   useEffect(() => {
     if (!token) return;
 
-    fetch("/api/admin/content", {
+    fetch(`/api/admin/content?_=${Date.now()}`, {
+      cache: "no-store",
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(async (res) => {
@@ -333,13 +334,16 @@ export function AdminPage() {
   };
 
   const resetTheme = () => {
+    const theme = {
+      dark: { ...defaultContent.theme.dark },
+      light: { ...defaultContent.theme.light },
+    };
+
     setContent((prev) => ({
       ...prev,
-      theme: {
-        dark: { ...defaultContent.theme.dark },
-        light: { ...defaultContent.theme.light },
-      },
+      theme,
     }));
+    applyTheme(theme);
     showToast("Renkler varsayılana sıfırlandı.", "success");
   };
 
@@ -369,15 +373,8 @@ export function AdminPage() {
       const saved = normalizeContent(result as SiteContent);
       setContent(saved);
       applySavedContent(saved);
+      applyTheme(saved.theme);
       showToast("Değişiklikler kaydedildi.", "success");
-
-      try {
-        await refresh();
-      } catch {
-        // Kayıt başarılı; arka plan senkronu başarısız olsa da kaydedilen içeriği koru
-      }
-
-      applySavedContent(saved);
     } catch {
       showToast("Kayıt sırasında hata oluştu.", "error");
     } finally {
