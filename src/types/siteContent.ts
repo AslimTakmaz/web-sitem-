@@ -4,12 +4,38 @@ export interface ContentField {
   value: string;
 }
 
+export type SkillLevel = "learning" | "using" | "good";
+export type SkillCategory = "frontend" | "backend" | "database" | "other";
+
+export interface Skill {
+  id: string;
+  name: string;
+  category: SkillCategory;
+  level: SkillLevel;
+}
+
+export interface Experience {
+  id: string;
+  title: string;
+  organization: string;
+  period: string;
+  description: string;
+}
+
+export interface SeoSettings {
+  title: string;
+  description: string;
+  keywords: string;
+}
+
 export interface Project {
   id: string;
   name: string;
   description: string;
   technologies: string[];
   features: string[];
+  imageUrl?: string;
+  published?: boolean;
   status?: "completed" | "in-progress";
   links: {
     github?: string;
@@ -29,6 +55,9 @@ export interface PersonalData {
   siteUrl: string;
   title: string;
   tagline: string;
+  statusLine?: string;
+  profileImage?: string;
+  cvUrl?: string;
   social: {
     github: string;
     linkedin: string;
@@ -54,6 +83,9 @@ export interface PersonalData {
 export interface SiteContent {
   personal: PersonalData;
   projects: Project[];
+  skills: Skill[];
+  experiences: Experience[];
+  seo: SeoSettings;
   theme: {
     dark: ThemePalette;
     light: ThemePalette;

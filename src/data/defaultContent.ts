@@ -7,6 +7,8 @@ export const defaultContent: SiteContent = {
     title: "Software Development Intern",
     tagline:
       "Modern web teknolojileri kullanarak kullanıcı odaklı web uygulamaları geliştiriyorum.",
+    statusLine: "Staj ve iş birliği fırsatlarına açığım",
+    cvUrl: "",
     social: {
       github: "https://github.com/AslimTakmaz",
       linkedin:
@@ -59,6 +61,7 @@ export const defaultContent: SiteContent = {
         "Veritabanı",
         "Responsive tasarım",
       ],
+      published: true,
       links: {
         github: "https://github.com/kullaniciadi/stajyer-takip-paneli",
         demo: "#",
@@ -78,11 +81,36 @@ export const defaultContent: SiteContent = {
         "İletişim bölümü",
         "Vercel deploy",
       ],
+      published: true,
       links: {
         github: "https://github.com/AslimTakmaz/web-sitem-",
       },
     },
   ],
+  skills: [
+    { id: "skill-react", name: "React", category: "frontend", level: "using" },
+    { id: "skill-ts", name: "TypeScript", category: "frontend", level: "using" },
+    { id: "skill-next", name: "Next.js", category: "frontend", level: "learning" },
+    { id: "skill-tailwind", name: "Tailwind CSS", category: "frontend", level: "using" },
+    { id: "skill-node", name: "Node.js", category: "backend", level: "learning" },
+    { id: "skill-sqlite", name: "SQLite", category: "database", level: "using" },
+  ],
+  experiences: [
+    {
+      id: "exp-education",
+      title: "Bilişim Teknologileri Öğrencisi",
+      organization: "Lise Eğitimi",
+      period: "2023 – Devam ediyor",
+      description:
+        "Web geliştirme, proje geliştirme ve yapay zekâ destekli araçlar üzerine çalışmalar yapıyorum.",
+    },
+  ],
+  seo: {
+    title: "Aslım Takmaz — Software Development Intern",
+    description:
+      "Aslım Takmaz — Software Development Intern. Modern web teknolojileri ile kullanıcı odaklı web uygulamaları geliştiriyorum.",
+    keywords: "Aslım Takmaz, yazılım geliştirici, portföy, React, TypeScript",
+  },
   theme: {
     dark: {
       accent: "#2dd4bf",

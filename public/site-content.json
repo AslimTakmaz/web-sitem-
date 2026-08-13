@@ -4,6 +4,8 @@
     "siteUrl": "https://aslimtakmaz-websitem.vercel.app",
     "title": "Software Development Intern",
     "tagline": "Modern web teknolojileri kullanarak kullanıcı odaklı web uygulamaları geliştiriyorum.",
+    "statusLine": "Staj ve iş birliği fırsatlarına açığım",
+    "cvUrl": "",
     "social": {
       "github": "https://github.com/AslimTakmaz",
       "linkedin": "https://www.linkedin.com/in/asl%C4%B1m-takmaz-38a199390/"
@@ -33,7 +35,8 @@
         "title": "11. Sınıf Bilişim Teknologileri Öğrencisi",
         "period": "2023 – Devam ediyor",
         "description": "Bilişim ve yazılım alanında kendimi geliştiriyor, öğrendiklerimi gerçek projelere dönüştürüyorum. Web geliştirme, proje geliştirme ve yapay zekâ destekli araçlar üzerine çalışmalar yapıyorum."
-      }
+      },
+      "extras": []
     }
   },
   "projects": [
@@ -56,6 +59,7 @@
         "Veritabanı",
         "Responsive tasarım"
       ],
+      "published": true,
       "links": {
         "github": "https://github.com/kullaniciadi/stajyer-takip-paneli",
         "demo": "#"
@@ -79,11 +83,64 @@
         "İletişim bölümü",
         "Vercel deploy"
       ],
+      "published": true,
       "links": {
         "github": "https://github.com/AslimTakmaz/web-sitem-"
       }
     }
   ],
+  "skills": [
+    {
+      "id": "skill-react",
+      "name": "React",
+      "category": "frontend",
+      "level": "using"
+    },
+    {
+      "id": "skill-ts",
+      "name": "TypeScript",
+      "category": "frontend",
+      "level": "using"
+    },
+    {
+      "id": "skill-next",
+      "name": "Next.js",
+      "category": "frontend",
+      "level": "learning"
+    },
+    {
+      "id": "skill-tailwind",
+      "name": "Tailwind CSS",
+      "category": "frontend",
+      "level": "using"
+    },
+    {
+      "id": "skill-node",
+      "name": "Node.js",
+      "category": "backend",
+      "level": "learning"
+    },
+    {
+      "id": "skill-sqlite",
+      "name": "SQLite",
+      "category": "database",
+      "level": "using"
+    }
+  ],
+  "experiences": [
+    {
+      "id": "exp-education",
+      "title": "Bilişim Teknologileri Öğrencisi",
+      "organization": "Lise Eğitimi",
+      "period": "2023 – Devam ediyor",
+      "description": "Web geliştirme, proje geliştirme ve yapay zekâ destekli araçlar üzerine çalışmalar yapıyorum."
+    }
+  ],
+  "seo": {
+    "title": "Aslım Takmaz — Software Development Intern",
+    "description": "Aslım Takmaz — Software Development Intern. Modern web teknolojileri ile kullanıcı odaklı web uygulamaları geliştiriyorum.",
+    "keywords": "Aslım Takmaz, yazılım geliştirici, portföy, React, TypeScript"
+  },
   "theme": {
     "dark": {
       "accent": "#2dd4bf",

@@ -31,7 +31,16 @@ export function normalizeContent(data: SiteContent): SiteContent {
         extras: data.personal?.about?.extras ?? [],
       },
     },
-    projects: data.projects ?? defaultContent.projects,
+    projects: (data.projects ?? defaultContent.projects).map((project) => ({
+      ...project,
+      published: project.published ?? true,
+    })),
+    skills: data.skills ?? defaultContent.skills,
+    experiences: data.experiences ?? defaultContent.experiences,
+    seo: {
+      ...defaultContent.seo,
+      ...data.seo,
+    },
     theme: {
       dark: { ...defaultContent.theme.dark, ...data.theme?.dark },
       light: { ...defaultContent.theme.light, ...data.theme?.light },
