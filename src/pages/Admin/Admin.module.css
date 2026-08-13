@@ -65,7 +65,9 @@
   flex-direction: column;
   width: 240px;
   padding: 1.5rem 1rem;
-  background: var(--color-bg-secondary);
+  background: var(--color-navbar-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-right: 1px solid var(--color-border);
 }
 
@@ -104,6 +106,10 @@
 }
 
 .sidebarTab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
   width: 100%;
   padding: 0.75rem 0.875rem;
   text-align: left;
@@ -111,7 +117,26 @@
   font-weight: 500;
   color: var(--color-text-muted);
   border-radius: 10px;
-  transition: background var(--transition), color var(--transition);
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.sidebarTabIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+  opacity: 0.75;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.sidebarTabIcon svg {
+  width: 100%;
+  height: 100%;
 }
 
 .sidebarTab:hover {
@@ -119,10 +144,31 @@
   background: var(--color-tag-bg);
 }
 
+.sidebarTab:hover .sidebarTabIcon {
+  opacity: 1;
+}
+
 .sidebarTabActive {
   color: var(--color-text);
   background: var(--color-tag-bg);
-  box-shadow: inset 3px 0 0 var(--color-accent);
+}
+
+.sidebarTabActive::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 3px;
+  height: 70%;
+  border-radius: 0 3px 3px 0;
+  background: var(--color-accent);
+  transform: translateY(-50%);
+  transition: height 0.25s ease, opacity 0.25s ease;
+}
+
+.sidebarTabActive .sidebarTabIcon {
+  color: var(--color-baby-blue);
+  opacity: 1;
 }
 
 .sidebarFooter {
@@ -151,12 +197,15 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1.5rem clamp(1rem, 3vw, 2rem);
-  background: var(--color-bg);
+  padding: 1rem clamp(1rem, 3vw, 2rem);
+  background: var(--color-navbar-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-nav);
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 15;
 }
 
 .topbarTitle {
@@ -179,6 +228,44 @@
 .statusBanner {
   margin: 0 clamp(1rem, 3vw, 2rem);
   margin-top: 1rem;
+}
+
+.toast {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 50;
+  max-width: min(360px, calc(100vw - 2rem));
+  padding: 0.875rem 1rem;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  box-shadow: var(--shadow-card-hover);
+  animation: toastIn 0.25s ease;
+}
+
+.toastSuccess {
+  color: #4ade80;
+  background: var(--color-card-bg);
+  border: 1px solid rgba(74, 222, 128, 0.35);
+}
+
+.toastError {
+  color: #f87171;
+  background: var(--color-card-bg);
+  border: 1px solid rgba(248, 113, 113, 0.35);
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .content {
@@ -264,6 +351,7 @@
 .textarea:focus {
   outline: none;
   border-color: var(--color-baby-blue);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-baby-blue) 18%, transparent);
 }
 
 .textarea {
@@ -308,6 +396,34 @@
   border: 1px solid rgba(248, 113, 113, 0.35);
   color: #f87171;
   font-size: 0.8125rem;
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border-radius: 8px;
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.25);
+  background: transparent;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.iconBtn svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.iconBtn:hover {
+  background: rgba(248, 113, 113, 0.1);
+  border-color: rgba(248, 113, 113, 0.45);
+  transform: translateY(-1px);
 }
 
 .success,

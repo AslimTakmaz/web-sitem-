@@ -11,12 +11,88 @@ const TOKEN_KEY = "portfolio-admin-token";
 
 type Tab = "general" | "about" | "projects" | "colors";
 
-const TABS: { id: Tab; label: string; description: string }[] = [
-  { id: "general", label: "Genel", description: "İsim, iletişim ve sosyal medya" },
-  { id: "about", label: "Hakkımda", description: "Biyografi, eğitim ve yetenekler" },
-  { id: "projects", label: "Projeler", description: "Proje listesi ve detayları" },
-  { id: "colors", label: "Renkler", description: "Açık ve koyu tema renkleri" },
+const TABS: {
+  id: Tab;
+  label: string;
+  description: string;
+  icon: "general" | "about" | "projects" | "colors";
+}[] = [
+  { id: "general", label: "Genel", description: "İsim, iletişim ve sosyal medya", icon: "general" },
+  { id: "about", label: "Hakkımda", description: "Biyografi, eğitim ve yetenekler", icon: "about" },
+  { id: "projects", label: "Projeler", description: "Proje listesi ve detayları", icon: "projects" },
+  { id: "colors", label: "Renkler", description: "Açık ve koyu tema renkleri", icon: "colors" },
 ];
+
+function TabIcon({ name }: { name: (typeof TABS)[number]["icon"] }) {
+  switch (name) {
+    case "general":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden="true">
+          <path d="M12 12a4 4 0 100-8 4 4 0 000 8z" strokeLinecap="round" />
+          <path d="M4 20c0-3.3 3.6-6 8-6s8 2.7 8 6" strokeLinecap="round" />
+        </svg>
+      );
+    case "about":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden="true">
+          <path d="M7 4h10v16H7z" strokeLinejoin="round" />
+          <path d="M9 8h6M9 12h6M9 16h4" strokeLinecap="round" />
+        </svg>
+      );
+    case "projects":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden="true">
+          <path d="M4 7h7v7H4zM13 7h7v4h-7zM13 13h7v7h-7zM4 16h7v4H4z" strokeLinejoin="round" />
+        </svg>
+      );
+    case "colors":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden="true">
+          <path d="M12 3c-4.4 0-8 2.7-8 6.5 0 2.1 1.4 4 3.5 5.1-.3.9-.8 2.1-1.5 2.9 1.8-.2 3.5-.9 4.8-2 1 .3 2 .5 3.2.5 4.4 0 8-2.7 8-6.5S16.4 3 12 3z" strokeLinejoin="round" />
+          <circle cx="8.5" cy="10" r="1" fill="currentColor" stroke="none" />
+          <circle cx="12" cy="8" r="1" fill="currentColor" stroke="none" />
+          <circle cx="15.5" cy="10.5" r="1" fill="currentColor" stroke="none" />
+        </svg>
+      );
+  }
+}
+
+function TrashIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden="true">
+      <path d="M4 7h16M9 7V5h6v2M10 11v6M14 11v6M6 7l1 12h10l1-12" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function DeleteButton({ onClick, label = "Sil" }: { onClick: () => void; label?: string }) {
+  return (
+    <button type="button" className={styles.iconBtn} onClick={onClick} aria-label={label}>
+      <TrashIcon />
+    </button>
+  );
+}
+
+function Toast({
+  message,
+  type,
+  onClose,
+}: {
+  message: string;
+  type: "success" | "error";
+  onClose: () => void;
+}) {
+  useEffect(() => {
+    const timer = window.setTimeout(onClose, 3200);
+    return () => window.clearTimeout(timer);
+  }, [onClose, message]);
+
+  return (
+    <div className={`${styles.toast} ${type === "success" ? styles.toastSuccess : styles.toastError}`} role="status">
+      {message}
+    </div>
+  );
+}
 
 function FieldBox({
   label,
@@ -33,8 +109,8 @@ function FieldBox({
     <div className={`${styles.fieldBox} ${fullWidth ? styles.fullWidth : ""}`}>
       <div className={styles.fieldBoxHeader}>
         <span className={styles.fieldBoxLabel}>{label}</span>
-        <button type="button" className={styles.dangerBtn} onClick={onDelete}>
-          Sil
+        <button type="button" className={styles.iconBtn} onClick={onDelete} aria-label={`${label} alanını sil`}>
+          <TrashIcon />
         </button>
       </div>
       <div className={styles.fieldBoxBody}>{children}</div>
@@ -115,8 +191,8 @@ function ExtraFieldsEditor({
         <div key={field.id} className={styles.extraCard}>
           <div className={styles.extraCardHeader}>
             <span className={styles.extraCardLabel}>Özel Alan</span>
-            <button type="button" className={styles.dangerBtn} onClick={() => removeField(field.id)}>
-              Sil
+            <button type="button" className={styles.iconBtn} onClick={() => removeField(field.id)} aria-label="Özel alanı sil">
+              <TrashIcon />
             </button>
           </div>
           <div className={styles.grid}>
@@ -193,8 +269,12 @@ export function AdminPage() {
   const [loginError, setLoginError] = useState("");
   const [content, setContent] = useState<SiteContent>(defaultContent);
   const [tab, setTab] = useState<Tab>("general");
-  const [status, setStatus] = useState("");
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [saving, setSaving] = useState(false);
+
+  const showToast = (message: string, type: "success" | "error") => {
+    setToast({ message, type });
+  };
 
   useEffect(() => {
     if (!token) return;
@@ -216,7 +296,7 @@ export function AdminPage() {
       .then((data) => setContent(normalizeContent(data)))
       .catch((error) => {
         if (error instanceof Error && error.message === "Yetkisiz") return;
-        setStatus("İçerik yüklenemedi. Sayfayı yenileyip tekrar deneyin.");
+        showToast("İçerik yüklenemedi. Sayfayı yenileyip tekrar deneyin.", "error");
       });
   }, [token]);
 
@@ -250,7 +330,7 @@ export function AdminPage() {
     if (!token) return;
 
     setSaving(true);
-    setStatus("");
+    setToast(null);
 
     try {
       const response = await fetch("/api/admin/content", {
@@ -265,14 +345,14 @@ export function AdminPage() {
       const result = await response.json();
 
       if (!response.ok) {
-        setStatus(result.error ?? "Kayıt başarısız");
+        showToast(result.error ?? "Kayıt başarısız", "error");
         return;
       }
 
-      setStatus("Değişiklikler kaydedildi.");
+      showToast("Değişiklikler kaydedildi.", "success");
       await refresh();
     } catch {
-      setStatus("Kayıt sırasında hata oluştu.");
+      showToast("Kayıt sırasında hata oluştu.", "error");
     } finally {
       setSaving(false);
     }
@@ -353,14 +433,17 @@ export function AdminPage() {
         </div>
 
         <nav className={styles.sidebarNav} aria-label="Admin menüsü">
-          {TABS.map(({ id, label }) => (
+          {TABS.map(({ id, label, icon }) => (
             <button
               key={id}
               type="button"
               className={`${styles.sidebarTab} ${tab === id ? styles.sidebarTabActive : ""}`}
               onClick={() => setTab(id)}
             >
-              {label}
+              <span className={styles.sidebarTabIcon}>
+                <TabIcon name={icon} />
+              </span>
+              <span>{label}</span>
             </button>
           ))}
         </nav>
@@ -395,10 +478,8 @@ export function AdminPage() {
           </div>
         </header>
 
-        {status && (
-          <p className={`${styles.statusBanner} ${status.includes("kaydedildi") ? styles.success : styles.error}`}>
-            {status}
-          </p>
+        {toast && (
+          <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
         )}
 
         <div className={styles.content}>
@@ -785,13 +866,7 @@ export function AdminPage() {
               <div key={project.id} className={styles.projectCard}>
                 <div className={styles.projectHeader}>
                   <h3>Proje {index + 1}</h3>
-                  <button
-                    type="button"
-                    className={styles.dangerBtn}
-                    onClick={() => removeProject(index)}
-                  >
-                    Sil
-                  </button>
+                  <DeleteButton onClick={() => removeProject(index)} label="Projeyi sil" />
                 </div>
                 <div className={styles.grid}>
                   <FieldBox
