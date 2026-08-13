@@ -53,7 +53,12 @@
 .shell {
   position: relative;
   min-height: 100vh;
-  background: var(--color-bg);
+  background: transparent;
+  --admin-glass-nav: color-mix(in srgb, var(--color-navbar-bg) 28%, transparent);
+  --admin-glass-panel: color-mix(in srgb, var(--color-card-bg) 52%, transparent);
+  --admin-glass-box: color-mix(in srgb, var(--color-bg-elevated) 42%, transparent);
+  --admin-glass-input: color-mix(in srgb, var(--color-input-bg) 48%, transparent);
+  --admin-glass-tag: color-mix(in srgb, var(--color-tag-bg) 38%, transparent);
 }
 
 .shell::before {
@@ -72,7 +77,7 @@
   position: fixed;
   inset: 0;
   z-index: 0;
-  background: color-mix(in srgb, var(--color-bg) 42%, transparent);
+  background: color-mix(in srgb, var(--color-bg) 28%, transparent);
   pointer-events: none;
 }
 
@@ -86,10 +91,10 @@
   flex-direction: column;
   width: 240px;
   padding: 1.5rem 1rem;
-  background: color-mix(in srgb, var(--color-navbar-bg) 50%, transparent);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-right: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+  background: var(--admin-glass-nav);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-right: 1px solid color-mix(in srgb, var(--color-border) 45%, transparent);
 }
 
 .main {
@@ -108,7 +113,7 @@
   gap: 0.75rem;
   padding: 0.5rem 0.75rem 1.5rem;
   margin-bottom: 0.5rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 45%, transparent);
 }
 
 .sidebarTitle {
@@ -164,7 +169,7 @@
 
 .sidebarTab:hover {
   color: var(--color-text);
-  background: var(--color-tag-bg);
+  background: var(--admin-glass-tag);
 }
 
 .sidebarTab:hover .sidebarTabIcon {
@@ -173,7 +178,7 @@
 
 .sidebarTabActive {
   color: var(--color-text);
-  background: var(--color-tag-bg);
+  background: var(--admin-glass-tag);
 }
 
 .sidebarTabActive::before {
@@ -197,7 +202,7 @@
 .sidebarFooter {
   padding-top: 1rem;
   margin-top: auto;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 45%, transparent);
 }
 
 .sidebarLink {
@@ -211,7 +216,7 @@
 
 .sidebarLink:hover {
   color: var(--color-baby-blue);
-  background: var(--color-tag-bg);
+  background: var(--admin-glass-tag);
 }
 
 .topbar {
@@ -221,11 +226,11 @@
   justify-content: space-between;
   gap: 1rem;
   padding: 1rem clamp(1rem, 3vw, 2rem);
-  background: color-mix(in srgb, var(--color-navbar-bg) 50%, transparent);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
-  box-shadow: var(--shadow-nav);
+  background: var(--admin-glass-nav);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 45%, transparent);
+  box-shadow: none;
   position: sticky;
   top: 0;
   z-index: 15;
@@ -301,10 +306,10 @@
   position: relative;
   z-index: 1;
   padding: 1rem;
-  background: color-mix(in srgb, var(--color-card-bg) 88%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
+  background: var(--admin-glass-panel);
+  border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
   border-radius: 12px;
-  box-shadow: var(--shadow-card);
+  box-shadow: none;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
 }
@@ -317,9 +322,11 @@
 
 .fieldBox {
   padding: 0.625rem;
-  background: var(--color-bg-elevated);
-  border: 1px solid var(--color-border);
+  background: var(--admin-glass-box);
+  border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
   border-radius: 10px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .fieldBoxHeader {
@@ -369,8 +376,8 @@
   font: inherit;
   font-size: 0.9375rem;
   color: var(--color-text);
-  background: var(--color-input-bg);
-  border: 1px solid var(--color-border);
+  background: var(--admin-glass-input);
+  border: 1px solid color-mix(in srgb, var(--color-border) 55%, transparent);
   border-radius: 8px;
   transition: border-color var(--transition);
 }
@@ -414,9 +421,11 @@
 }
 
 .secondaryBtn {
-  border: 1px solid var(--color-border);
+  border: 1px solid color-mix(in srgb, var(--color-border) 55%, transparent);
   color: var(--color-text);
-  background: var(--color-bg-elevated);
+  background: var(--admin-glass-box);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .dangerBtn {
@@ -481,9 +490,11 @@
 
 .projectCard {
   padding: 0.875rem;
-  border: 1px solid var(--color-border);
+  border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
   border-radius: 10px;
-  background: var(--color-bg-elevated);
+  background: var(--admin-glass-box);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .projectHeader {
@@ -492,7 +503,7 @@
   justify-content: space-between;
   margin-bottom: 0.75rem;
   padding-bottom: 0.625rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 45%, transparent);
 }
 
 .projectHeader h3 {
@@ -511,16 +522,18 @@
   flex-direction: column;
   gap: 0.875rem;
   padding: 1.25rem;
-  background: var(--color-bg-elevated);
-  border: 1px solid var(--color-border);
+  background: var(--admin-glass-box);
+  border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
   border-radius: 12px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .themeTitle {
   font-size: 1rem;
   font-weight: 600;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 45%, transparent);
 }
 
 .colorInputRow {
@@ -542,7 +555,7 @@
   grid-column: 1 / -1;
   margin-top: 0.5rem;
   padding-top: 1.5rem;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 45%, transparent);
 }
 
 .extrasHeader {
@@ -569,17 +582,19 @@
   padding: 1rem;
   font-size: 0.875rem;
   color: var(--color-text-muted);
-  background: var(--color-bg-elevated);
-  border: 1px dashed var(--color-border);
+  background: var(--admin-glass-box);
+  border: 1px dashed color-mix(in srgb, var(--color-border) 50%, transparent);
   border-radius: 10px;
 }
 
 .extraCard {
   padding: 0.625rem;
   margin-bottom: 0.625rem;
-  background: var(--color-bg-elevated);
-  border: 1px solid var(--color-border);
+  background: var(--admin-glass-box);
+  border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
   border-radius: 10px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .extraCardHeader {
