@@ -1,11 +1,16 @@
-import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { Logo } from "../../components/Logo/Logo";
 import { ThemeToggle } from "../../components/ThemeToggle/ThemeToggle";
 import { applyTheme, useSiteContent } from "../../context/SiteContentContext";
 import { defaultContent } from "../../data/defaultContent";
 import { normalizeContent } from "../../data/normalizeContent";
-import { getCachedContent, persistContentCache } from "../../lib/themeStorage";
+import {
+  applyThemePreview,
+  getCachedContent,
+  normalizeHexColor,
+  persistContentCache,
+} from "../../lib/themeStorage";
 import type { Project, SiteContent, ThemePalette, ContentField } from "../../types/siteContent";
 import styles from "./Admin.module.css";
 
@@ -87,7 +92,7 @@ function Toast({
   useEffect(() => {
     const timer = window.setTimeout(onClose, 3200);
     return () => window.clearTimeout(timer);
-  }, [onClose, message]);
+  }, [message, type, onClose]);
 
   return (
     <div className={`${styles.toast} ${type === "success" ? styles.toastSuccess : styles.toastError}`} role="status">
@@ -129,11 +134,17 @@ function ColorField({
   value: string;
   onChange: (value: string) => void;
 }) {
+  const pickerValue = normalizeHexColor(value, "#000000");
+
   return (
     <label className={styles.colorField}>
       <span>{label}</span>
       <div className={styles.colorInputRow}>
-        <input type="color" value={value} onChange={(e) => onChange(e.target.value)} />
+        <input
+          type="color"
+          value={pickerValue}
+          onChange={(e) => onChange(normalizeHexColor(e.target.value, pickerValue))}
+        />
         <input
           type="text"
           value={value}
@@ -161,7 +172,7 @@ function ExtraFieldsEditor({
   const addField = () => {
     onChange([
       ...fields,
-      { id: `field-${Date.now()}`, label: "Yeni Alan", value: "" },
+      { id: crypto.randomUUID(), label: "Yeni Alan", value: "" },
     ]);
   };
 
@@ -273,49 +284,77 @@ export function AdminPage() {
   const [tab, setTab] = useState<Tab>("general");
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [saving, setSaving] = useState(false);
+  const [loggingIn, setLoggingIn] = useState(false);
+  const [contentLoading, setContentLoading] = useState(false);
+  const [usingDefaultContent, setUsingDefaultContent] = useState(false);
+  const contentRef = useRef(content);
 
-  const showToast = (message: string, type: "success" | "error") => {
+  useEffect(() => {
+    contentRef.current = content;
+  }, [content]);
+
+  const dismissToast = useCallback(() => setToast(null), []);
+
+  const showToast = useCallback((message: string, type: "success" | "error") => {
     setToast({ message, type });
-  };
+  }, []);
+
+  const logout = useCallback(
+    (message = "Oturum süresi doldu. Tekrar giriş yapın.") => {
+      sessionStorage.removeItem(TOKEN_KEY);
+      setToken(null);
+      showToast(message, "error");
+    },
+    [showToast],
+  );
 
   useEffect(() => {
     if (!token) return;
-    applyTheme(content.theme);
-  }, [token, content.theme]);
 
-  useEffect(() => {
-    if (!token) return;
+    const controller = new AbortController();
+    setContentLoading(true);
 
     fetch(`/api/admin/content?_=${Date.now()}`, {
       cache: "no-store",
+      signal: controller.signal,
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(async (res) => {
         if (res.status === 401) {
-          sessionStorage.removeItem(TOKEN_KEY);
-          setToken(null);
+          logout();
           throw new Error("Yetkisiz");
         }
         if (!res.ok) {
           throw new Error("İçerik yüklenemedi");
         }
-        return res.json() as Promise<SiteContent>;
-      })
-      .then((data) => {
+
+        const source = res.headers.get("X-Content-Source");
+        setUsingDefaultContent(source === "default");
+
+        const data = (await res.json()) as SiteContent;
         const normalized = normalizeContent(data);
         setContent(normalized);
         applyTheme(normalized.theme);
         persistContentCache(normalized);
       })
       .catch((error) => {
+        if (controller.signal.aborted) return;
         if (error instanceof Error && error.message === "Yetkisiz") return;
         showToast("İçerik yüklenemedi. Sayfayı yenileyip tekrar deneyin.", "error");
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setContentLoading(false);
+        }
       });
-  }, [token]);
+
+    return () => controller.abort();
+  }, [token, logout, showToast]);
 
   const handleLogin = async (event: FormEvent) => {
     event.preventDefault();
     setLoginError("");
+    setLoggingIn(true);
 
     try {
       const response = await fetch("/api/admin/login", {
@@ -324,10 +363,21 @@ export function AdminPage() {
         body: JSON.stringify({ password }),
       });
 
-      const result = await response.json();
+      let result: { token?: string; error?: string } = {};
+      try {
+        result = (await response.json()) as { token?: string; error?: string };
+      } catch {
+        setLoginError("Sunucu yanıtı okunamadı");
+        return;
+      }
 
       if (!response.ok) {
         setLoginError(result.error ?? "Giriş başarısız");
+        return;
+      }
+
+      if (!result.token) {
+        setLoginError("Giriş başarısız");
         return;
       }
 
@@ -336,6 +386,8 @@ export function AdminPage() {
       setPassword("");
     } catch {
       setLoginError("Sunucuya bağlanılamadı");
+    } finally {
+      setLoggingIn(false);
     }
   };
 
@@ -345,19 +397,15 @@ export function AdminPage() {
       light: { ...defaultContent.theme.light },
     };
 
-    setContent((prev) => {
-      const next = { ...prev, theme };
-      persistContentCache(next);
-      return next;
-    });
-    applyTheme(theme);
-    showToast("Renkler varsayılana sıfırlandı.", "success");
+    setContent((prev) => ({ ...prev, theme }));
+    applyThemePreview(theme);
+    showToast("Renkler varsayılana sıfırlandı. Kalıcı olması için Kaydet'e basın.", "success");
   };
 
   const updateTheme = (patch: (theme: SiteContent["theme"]) => SiteContent["theme"]) => {
     setContent((prev) => {
       const theme = patch(prev.theme);
-      applyTheme(theme);
+      applyThemePreview(theme);
       return { ...prev, theme };
     });
   };
@@ -368,6 +416,8 @@ export function AdminPage() {
     setSaving(true);
     setToast(null);
 
+    const payload = contentRef.current;
+
     try {
       const response = await fetch("/api/admin/content", {
         method: "PUT",
@@ -375,10 +425,21 @@ export function AdminPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(content),
+        body: JSON.stringify(payload),
       });
 
-      const result = (await response.json()) as SiteContent | { error?: string };
+      if (response.status === 401) {
+        logout();
+        return;
+      }
+
+      let result: SiteContent | { error?: string };
+      try {
+        result = (await response.json()) as SiteContent | { error?: string };
+      } catch {
+        showToast("Sunucu yanıtı okunamadı", "error");
+        return;
+      }
 
       if (!response.ok) {
         showToast("error" in result ? result.error ?? "Kayıt başarısız" : "Kayıt başarısız", "error");
@@ -389,6 +450,8 @@ export function AdminPage() {
       setContent(saved);
       applySavedContent(saved);
       persistContentCache(saved);
+      applyTheme(saved.theme);
+      setUsingDefaultContent(false);
       showToast("Değişiklikler kaydedildi.", "success");
     } catch {
       showToast("Kayıt sırasında hata oluştu.", "error");
@@ -406,7 +469,7 @@ export function AdminPage() {
 
   const addProject = () => {
     const newProject: Project = {
-      id: `proje-${Date.now()}`,
+      id: crypto.randomUUID(),
       name: "Yeni Proje",
       description: "Proje açıklaması",
       technologies: ["React"],
@@ -421,6 +484,13 @@ export function AdminPage() {
   };
 
   const removeProject = (index: number) => {
+    const project = content.projects[index];
+    if (!project) return;
+
+    if (!window.confirm(`"${project.name}" projesini silmek istediğine emin misin?`)) {
+      return;
+    }
+
     setContent((prev) => ({
       ...prev,
       projects: prev.projects.filter((_, i) => i !== index),
@@ -446,8 +516,8 @@ export function AdminPage() {
               />
             </label>
             {loginError && <p className={styles.error}>{loginError}</p>}
-            <button type="submit" className={styles.primaryBtn}>
-              Giriş Yap
+            <button type="submit" className={styles.primaryBtn} disabled={loggingIn}>
+              {loggingIn ? "Giriş yapılıyor..." : "Giriş Yap"}
             </button>
           </form>
           <Link to="/" className={styles.backLink}>
@@ -518,11 +588,19 @@ export function AdminPage() {
         </header>
 
         {toast && (
-          <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
+          <Toast message={toast.message} type={toast.type} onClose={dismissToast} />
+        )}
+
+        {usingDefaultContent && (
+          <p className={styles.statusBanner}>
+            Canlı depolama okunamadı — varsayılan içerik gösteriliyor. Kaydettiğinizde Blob bağlantısı
+            kurulmuş olmalı.
+          </p>
         )}
 
         <div className={styles.content}>
           <div className={styles.panel}>
+            {contentLoading && <div className={styles.loadingOverlay}>İçerik yükleniyor...</div>}
         {tab === "general" && (
           <div className={styles.grid}>
             <FieldBox
@@ -561,6 +639,27 @@ export function AdminPage() {
                   setContent((prev) => ({
                     ...prev,
                     personal: { ...prev.personal, title: e.target.value },
+                  }))
+                }
+              />
+            </FieldBox>
+            <FieldBox
+              label="Site URL"
+              fullWidth
+              onDelete={() =>
+                setContent((prev) => ({
+                  ...prev,
+                  personal: { ...prev.personal, siteUrl: defaultContent.personal.siteUrl },
+                }))
+              }
+            >
+              <input
+                className={styles.input}
+                value={content.personal.siteUrl}
+                onChange={(e) =>
+                  setContent((prev) => ({
+                    ...prev,
+                    personal: { ...prev.personal, siteUrl: e.target.value },
                   }))
                 }
               />
@@ -939,6 +1038,50 @@ export function AdminPage() {
                         })
                       }
                     />
+                  </FieldBox>
+                  <FieldBox
+                    label="Demo Linki"
+                    onDelete={() =>
+                      updateProject(index, {
+                        ...project,
+                        links: { ...project.links, demo: undefined },
+                      })
+                    }
+                  >
+                    <input
+                      className={styles.input}
+                      value={project.links.demo ?? ""}
+                      onChange={(e) =>
+                        updateProject(index, {
+                          ...project,
+                          links: { ...project.links, demo: e.target.value || undefined },
+                        })
+                      }
+                    />
+                  </FieldBox>
+                  <FieldBox
+                    label="Durum"
+                    onDelete={() =>
+                      updateProject(index, { ...project, status: undefined })
+                    }
+                  >
+                    <select
+                      className={styles.input}
+                      value={project.status ?? ""}
+                      onChange={(e) =>
+                        updateProject(index, {
+                          ...project,
+                          status:
+                            e.target.value === "completed" || e.target.value === "in-progress"
+                              ? e.target.value
+                              : undefined,
+                        })
+                      }
+                    >
+                      <option value="">Belirtilmedi</option>
+                      <option value="completed">Tamamlandı</option>
+                      <option value="in-progress">Devam ediyor</option>
+                    </select>
                   </FieldBox>
                   <FieldBox
                     label="Açıklama"

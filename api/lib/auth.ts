@@ -3,8 +3,18 @@ import type { VercelRequest } from "@vercel/node";
 
 const TOKEN_TTL_MS = 1000 * 60 * 60 * 12;
 
-function getAdminSecret() {
-  return process.env.ADMIN_SECRET ?? process.env.ADMIN_PASSWORD ?? "admin123";
+export function getAdminSecret() {
+  const secret = process.env.ADMIN_SECRET ?? process.env.ADMIN_PASSWORD;
+
+  if (secret) {
+    return secret;
+  }
+
+  if (process.env.VERCEL_ENV === "production") {
+    throw new Error("ADMIN_PASSWORD ortam değişkeni tanımlı değil");
+  }
+
+  return "admin123";
 }
 
 export function createAdminToken() {

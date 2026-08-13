@@ -10,25 +10,25 @@ export function normalizeContent(data: SiteContent): SiteContent {
       ...data.personal,
       social: {
         ...defaultContent.personal.social,
-        ...data.personal.social,
+        ...data.personal?.social,
       },
       contact: {
         ...defaultContent.personal.contact,
-        ...data.personal.contact,
+        ...data.personal?.contact,
       },
-      generalExtras: data.personal.generalExtras ?? [],
+      generalExtras: data.personal?.generalExtras ?? [],
       about: {
         ...defaultContent.personal.about,
-        ...data.personal.about,
+        ...data.personal?.about,
         education: {
           ...defaultContent.personal.about.education,
-          ...data.personal.about?.education,
+          ...data.personal?.about?.education,
         },
         technologies:
-          data.personal.about?.technologies ?? defaultContent.personal.about.technologies,
+          data.personal?.about?.technologies ?? defaultContent.personal.about.technologies,
         focusAreas:
-          data.personal.about?.focusAreas ?? defaultContent.personal.about.focusAreas,
-        extras: data.personal.about?.extras ?? [],
+          data.personal?.about?.focusAreas ?? defaultContent.personal.about.focusAreas,
+        extras: data.personal?.about?.extras ?? [],
       },
     },
     projects: data.projects ?? defaultContent.projects,

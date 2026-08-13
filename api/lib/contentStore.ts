@@ -188,19 +188,28 @@ function readDefaultContent(): SiteContent {
   return JSON.parse(readFileSync(filePath, "utf8")) as SiteContent;
 }
 
-export async function loadSiteContent(): Promise<SiteContent> {
+export async function loadSiteContent(): Promise<{
+  content: SiteContent;
+  source: "blob" | "default";
+}> {
   try {
     const result = await blobGet();
 
     if (result?.stream) {
       const text = await new Response(result.stream).text();
-      return normalizeContent(JSON.parse(text) as SiteContent);
+      return {
+        content: normalizeContent(JSON.parse(text) as SiteContent),
+        source: "blob",
+      };
     }
   } catch {
     // Blob yoksa veya okunamıyorsa varsayılana düş
   }
 
-  return normalizeContent(readDefaultContent());
+  return {
+    content: normalizeContent(readDefaultContent()),
+    source: "default",
+  };
 }
 
 export async function saveSiteContent(content: SiteContent): Promise<SiteContent> {
