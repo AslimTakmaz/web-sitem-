@@ -108,16 +108,6 @@ export function AdminPage() {
   const [usingDefaultContent, setUsingDefaultContent] = useState(false);
   const contentRef = useRef(content);
 
-  useEffect(() => {
-    contentRef.current = content;
-  }, [content]);
-
-  useEffect(() => {
-    if (tab === "colors") {
-      applyThemePreview(content.theme);
-    }
-  }, [content.theme, tab]);
-
   const dismissToast = useCallback(() => setToast(null), []);
   const showToast = useCallback((message: string, type: "success" | "error") => {
     setToast({ message, type });
@@ -132,11 +122,45 @@ export function AdminPage() {
     [showToast],
   );
 
+  const logoutRef = useRef(logout);
+  const showToastRef = useRef(showToast);
+
+  useEffect(() => {
+    contentRef.current = content;
+  }, [content]);
+
+  useEffect(() => {
+    logoutRef.current = logout;
+    showToastRef.current = showToast;
+  }, [logout, showToast]);
+
+  useEffect(() => {
+    if (tab === "colors") {
+      applyThemePreview(content.theme);
+    }
+  }, [content.theme, tab]);
+
   useEffect(() => {
     if (!token) return;
 
     const controller = new AbortController();
+    let settled = false;
     setContentLoading(true);
+
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      setContentLoading(false);
+    };
+
+    const timeoutId = window.setTimeout(() => {
+      controller.abort();
+      finish();
+      showToastRef.current(
+        "İçerik yüklemesi zaman aşımına uğradı. Önbellekteki veri gösteriliyor.",
+        "error",
+      );
+    }, 15000);
 
     fetch(`/api/admin/content?_=${Date.now()}`, {
       cache: "no-store",
@@ -145,7 +169,7 @@ export function AdminPage() {
     })
       .then(async (res) => {
         if (res.status === 401) {
-          logout();
+          logoutRef.current();
           throw new Error("Yetkisiz");
         }
         if (!res.ok) throw new Error("İçerik yüklenemedi");
@@ -160,14 +184,19 @@ export function AdminPage() {
       .catch((error) => {
         if (controller.signal.aborted) return;
         if (error instanceof Error && error.message === "Yetkisiz") return;
-        showToast("İçerik yüklenemedi. Sayfayı yenileyip tekrar deneyin.", "error");
+        showToastRef.current("İçerik yüklenemedi. Sayfayı yenileyip tekrar deneyin.", "error");
       })
       .finally(() => {
-        if (!controller.signal.aborted) setContentLoading(false);
+        window.clearTimeout(timeoutId);
+        finish();
       });
 
-    return () => controller.abort();
-  }, [token, logout, showToast]);
+    return () => {
+      window.clearTimeout(timeoutId);
+      settled = true;
+      controller.abort();
+    };
+  }, [token]);
 
   const handleLogin = async (event: FormEvent) => {
     event.preventDefault();

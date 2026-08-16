@@ -27,10 +27,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === "GET") {
     try {
-      const [{ content, source }, messages] = await Promise.all([
-        loadSiteContent(),
-        loadMessages(),
-      ]);
+      const { content, source } = await loadSiteContent();
+      const messages = await loadMessages(content.messages ?? []);
       res.setHeader("Cache-Control", "no-store, max-age=0");
       res.setHeader("X-Content-Source", source);
       return res.status(200).json({ ...content, messages });
@@ -42,10 +40,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "PUT") {
     try {
       const parsed = parseSiteContentBody(req);
-      const [saved, messages] = await Promise.all([
-        saveSiteContent(normalizeContent(parsed)),
-        loadMessages(),
-      ]);
+      const saved = await saveSiteContent(normalizeContent(parsed));
+      const messages = await loadMessages([]);
       res.setHeader("Cache-Control", "no-store");
       return res.status(200).json({ ...saved, messages });
     } catch (error) {

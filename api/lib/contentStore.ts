@@ -203,7 +203,9 @@ function isContactMessage(value: unknown): value is ContactMessage {
   );
 }
 
-export async function loadMessages(): Promise<ContactMessage[]> {
+export async function loadMessages(
+  fallback: ContactMessage[] = [],
+): Promise<ContactMessage[]> {
   try {
     const result = await blobGet(MESSAGES_PATHNAME);
     if (result?.stream) {
@@ -214,15 +216,10 @@ export async function loadMessages(): Promise<ContactMessage[]> {
       }
     }
   } catch {
-    // Ayrı mesaj dosyası yoksa site içeriğindeki eski mesajlara düş
+    // Mesaj dosyası yoksa fallback kullan
   }
 
-  try {
-    const { content } = await loadSiteContent();
-    return (content.messages ?? []).filter(isContactMessage).slice(0, MAX_MESSAGES);
-  } catch {
-    return [];
-  }
+  return fallback.filter(isContactMessage).slice(0, MAX_MESSAGES);
 }
 
 export async function saveMessages(messages: ContactMessage[]): Promise<ContactMessage[]> {
