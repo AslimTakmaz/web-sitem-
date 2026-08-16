@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import type { SiteContent } from "../../src/types/siteContent";
 import { getBearerToken, verifyAdminToken } from "../lib/auth.js";
-import { loadSiteContent, saveSiteContent } from "../lib/contentStore.js";
+import { loadMessages, loadSiteContent, saveSiteContent } from "../lib/contentStore.js";
 import { normalizeContent } from "../lib/normalizeContent.js";
 
 function parseSiteContentBody(req: VercelRequest): SiteContent {
@@ -27,10 +27,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === "GET") {
     try {
-      const { content, source } = await loadSiteContent();
+      const [{ content, source }, messages] = await Promise.all([
+        loadSiteContent(),
+        loadMessages(),
+      ]);
       res.setHeader("Cache-Control", "no-store, max-age=0");
       res.setHeader("X-Content-Source", source);
-      return res.status(200).json(content);
+      return res.status(200).json({ ...content, messages });
     } catch {
       return res.status(500).json({ error: "İçerik yüklenemedi" });
     }
@@ -39,9 +42,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "PUT") {
     try {
       const parsed = parseSiteContentBody(req);
-      const saved = await saveSiteContent(normalizeContent(parsed));
+      const [saved, messages] = await Promise.all([
+        saveSiteContent(normalizeContent(parsed)),
+        loadMessages(),
+      ]);
       res.setHeader("Cache-Control", "no-store");
-      return res.status(200).json(saved);
+      return res.status(200).json({ ...saved, messages });
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Kayıt başarısız";

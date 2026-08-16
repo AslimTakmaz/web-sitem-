@@ -306,7 +306,13 @@ export function AdminPage() {
       case "skills":
         return <SkillsSection {...sectionProps} />;
       case "messages":
-        return <MessagesSection {...sectionProps} />;
+        return (
+          <MessagesSection
+            {...sectionProps}
+            token={token}
+            onUnauthorized={() => logout()}
+          />
+        );
       case "social":
         return <SocialSection {...sectionProps} />;
       case "colors":

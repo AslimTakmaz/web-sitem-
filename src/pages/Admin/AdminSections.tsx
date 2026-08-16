@@ -1,8 +1,9 @@
-import { useMemo, useState, type Dispatch, type ReactNode, type SetStateAction } from "react";
+import { useCallback, useEffect, useMemo, useState, type Dispatch, type ReactNode, type SetStateAction } from "react";
 import { ThemeToggle } from "../../components/ThemeToggle/ThemeToggle";
 import { defaultContent } from "../../data/defaultContent";
 import { normalizeHexColor } from "../../lib/themeStorage";
 import type {
+  ContactMessage,
   Experience,
   Project,
   SiteContent,
@@ -666,8 +667,18 @@ export function SkillsSection({ content, setContent }: SectionProps) {
   );
 }
 
-export function MessagesSection({ content, setContent }: SectionProps) {
+export function MessagesSection({
+  content,
+  setContent,
+  token,
+  onUnauthorized,
+}: SectionProps & {
+  token: string;
+  onUnauthorized: () => void;
+}) {
   const [filter, setFilter] = useState<"all" | "unread" | "read">("all");
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const messages = content.messages ?? [];
   const filtered = messages.filter((msg) => {
@@ -676,53 +687,113 @@ export function MessagesSection({ content, setContent }: SectionProps) {
     return true;
   });
 
+  const refreshMessages = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/admin/messages?_=${Date.now()}`, {
+        cache: "no-store",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.status === 401) {
+        onUnauthorized();
+        return;
+      }
+
+      if (!response.ok) return;
+
+      const data = (await response.json()) as { messages?: ContactMessage[] };
+      setContent((prev) => ({ ...prev, messages: data.messages ?? [] }));
+    } finally {
+      setLoading(false);
+    }
+  }, [token, onUnauthorized, setContent]);
+
+  useEffect(() => {
+    void refreshMessages();
+  }, [refreshMessages]);
+
+  const persistMessages = async (next: ContactMessage[]) => {
+    setSaving(true);
+    setContent((prev) => ({ ...prev, messages: next }));
+
+    try {
+      const response = await fetch("/api/admin/messages", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ messages: next }),
+      });
+
+      if (response.status === 401) {
+        onUnauthorized();
+        return;
+      }
+
+      if (!response.ok) {
+        await refreshMessages();
+        return;
+      }
+
+      const data = (await response.json()) as { messages?: ContactMessage[] };
+      setContent((prev) => ({ ...prev, messages: data.messages ?? next }));
+    } catch {
+      await refreshMessages();
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const markRead = (id: string) => {
-    setContent((prev) => ({
-      ...prev,
-      messages: (prev.messages ?? []).map((msg) =>
-        msg.id === id ? { ...msg, read: true } : msg,
-      ),
-    }));
+    void persistMessages(
+      messages.map((msg) => (msg.id === id ? { ...msg, read: true } : msg)),
+    );
   };
 
   const removeMessage = (id: string) => {
     if (!window.confirm("Bu mesajı silmek istediğine emin misin?")) return;
-    setContent((prev) => ({
-      ...prev,
-      messages: (prev.messages ?? []).filter((msg) => msg.id !== id),
-    }));
+    void persistMessages(messages.filter((msg) => msg.id !== id));
   };
 
   return (
     <div className={styles.stack}>
-      <div className={styles.tabs}>
-        <button
-          type="button"
-          className={`${styles.tabBtn} ${filter === "all" ? styles.tabBtnActive : ""}`}
-          onClick={() => setFilter("all")}
-        >
-          Tümü ({messages.length})
-        </button>
-        <button
-          type="button"
-          className={`${styles.tabBtn} ${filter === "unread" ? styles.tabBtnActive : ""}`}
-          onClick={() => setFilter("unread")}
-        >
-          Okunmamış ({messages.filter((m) => !m.read).length})
-        </button>
-        <button
-          type="button"
-          className={`${styles.tabBtn} ${filter === "read" ? styles.tabBtnActive : ""}`}
-          onClick={() => setFilter("read")}
-        >
-          Okundu ({messages.filter((m) => m.read).length})
+      <div className={styles.tableToolbar}>
+        <div className={styles.tabs}>
+          <button
+            type="button"
+            className={`${styles.tabBtn} ${filter === "all" ? styles.tabBtnActive : ""}`}
+            onClick={() => setFilter("all")}
+          >
+            Tümü ({messages.length})
+          </button>
+          <button
+            type="button"
+            className={`${styles.tabBtn} ${filter === "unread" ? styles.tabBtnActive : ""}`}
+            onClick={() => setFilter("unread")}
+          >
+            Okunmamış ({messages.filter((m) => !m.read).length})
+          </button>
+          <button
+            type="button"
+            className={`${styles.tabBtn} ${filter === "read" ? styles.tabBtnActive : ""}`}
+            onClick={() => setFilter("read")}
+          >
+            Okundu ({messages.filter((m) => m.read).length})
+          </button>
+        </div>
+        <button type="button" className={styles.secondaryBtnSmall} onClick={() => void refreshMessages()} disabled={loading || saving}>
+          {loading ? "Yükleniyor..." : "Yenile"}
         </button>
       </div>
 
       {filtered.length === 0 ? (
         <div className={styles.emptyState}>
           <p>Henüz mesaj yok.</p>
-          <p className={styles.emptyHint}>Site iletişim formundan gelen mesajlar burada görünür.</p>
+          <p className={styles.emptyHint}>
+            Sitenin altındaki iletişim formundan gelen mesajlar burada listelenir.
+          </p>
         </div>
       ) : (
         <ul className={styles.messageList}>
@@ -741,11 +812,22 @@ export function MessagesSection({ content, setContent }: SectionProps) {
               <p className={styles.messageBody}>{msg.message}</p>
               <div className={styles.messageActions}>
                 {!msg.read && (
-                  <button type="button" className={styles.secondaryBtnSmall} onClick={() => markRead(msg.id)}>
+                  <button
+                    type="button"
+                    className={styles.secondaryBtnSmall}
+                    onClick={() => markRead(msg.id)}
+                    disabled={saving}
+                  >
                     Okundu işaretle
                   </button>
                 )}
-                <button type="button" className={styles.iconBtn} onClick={() => removeMessage(msg.id)} aria-label="Sil">
+                <button
+                  type="button"
+                  className={styles.iconBtn}
+                  onClick={() => removeMessage(msg.id)}
+                  aria-label="Sil"
+                  disabled={saving}
+                >
                   <IconTrash />
                 </button>
               </div>

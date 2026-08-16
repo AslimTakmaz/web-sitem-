@@ -1,8 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import type { ContactMessage } from "../src/types/siteContent";
-import { loadSiteContent, saveSiteContent } from "./lib/contentStore.js";
-
-const MAX_MESSAGES = 100;
+import { appendContactMessage } from "./lib/contentStore.js";
 
 function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -47,21 +44,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const { content } = await loadSiteContent();
-
-    const entry: ContactMessage = {
-      id: crypto.randomUUID(),
-      name,
-      email,
-      subject,
-      message,
-      read: false,
-      createdAt: new Date().toISOString(),
-    };
-
-    const messages = [entry, ...(content.messages ?? [])].slice(0, MAX_MESSAGES);
-    await saveSiteContent({ ...content, messages });
-
+    await appendContactMessage({ name, email, subject, message });
     return res.status(200).json({ ok: true });
   } catch {
     return res.status(500).json({ error: "Mesaj gönderilemedi. Lütfen tekrar deneyin." });
