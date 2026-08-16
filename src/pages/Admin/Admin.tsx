@@ -66,6 +66,7 @@ const TABS: {
   { id: "projects", label: "Projeler", description: "Proje listesi ve kapak görselleri", icon: <IconProjects /> },
   { id: "skills", label: "Yetenekler", description: "Teknik beceriler ve seviyeler", icon: <IconSkills /> },
   { id: "messages", label: "Mesajlar", description: "Gelen iletişim mesajları", icon: <IconMessages /> },
+  // CV sekmesi kasıtlı olarak yok — şimdilik kullanılmıyor
   { id: "social", label: "Sosyal Medya", description: "GitHub, LinkedIn ve diğer linkler", icon: <IconSocial /> },
   { id: "colors", label: "Renkler", description: "Açık ve koyu tema renkleri", icon: <IconColors /> },
   { id: "seo", label: "SEO", description: "Arama motoru optimizasyonu", icon: <IconSeo /> },
