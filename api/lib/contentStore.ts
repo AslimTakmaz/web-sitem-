@@ -203,6 +203,18 @@ function isContactMessage(value: unknown): value is ContactMessage {
   );
 }
 
+function normalizeMessage(item: ContactMessage): ContactMessage {
+  return {
+    id: item.id,
+    name: item.name,
+    email: item.email,
+    subject: item.subject,
+    message: item.message,
+    createdAt: item.createdAt,
+    read: Boolean(item.read),
+  };
+}
+
 export async function loadMessages(
   fallback: ContactMessage[] = [],
 ): Promise<ContactMessage[]> {
@@ -212,18 +224,24 @@ export async function loadMessages(
       const text = await new Response(result.stream).text();
       const parsed = JSON.parse(text) as unknown;
       if (Array.isArray(parsed)) {
-        return parsed.filter(isContactMessage).slice(0, MAX_MESSAGES);
+        const messages = parsed.filter(isContactMessage).map(normalizeMessage);
+        if (messages.length > 0) {
+          return messages.slice(0, MAX_MESSAGES);
+        }
       }
     }
   } catch {
     // Mesaj dosyası yoksa fallback kullan
   }
 
-  return fallback.filter(isContactMessage).slice(0, MAX_MESSAGES);
+  return fallback.filter(isContactMessage).map(normalizeMessage).slice(0, MAX_MESSAGES);
 }
 
 export async function saveMessages(messages: ContactMessage[]): Promise<ContactMessage[]> {
-  const normalized = messages.filter(isContactMessage).slice(0, MAX_MESSAGES);
+  const normalized = messages
+    .filter(isContactMessage)
+    .map(normalizeMessage)
+    .slice(0, MAX_MESSAGES);
   await blobPut(JSON.stringify(normalized, null, 2), MESSAGES_PATHNAME);
   return normalized;
 }

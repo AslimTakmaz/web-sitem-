@@ -339,7 +339,7 @@ export function AdminPage() {
           <MessagesSection
             {...sectionProps}
             token={token}
-            onUnauthorized={() => logout()}
+            onUnauthorized={logout}
           />
         );
       case "social":

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type Dispatch, type ReactNode, type SetStateAction } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type ReactNode, type SetStateAction } from "react";
 import { ThemeToggle } from "../../components/ThemeToggle/ThemeToggle";
 import { GitHubIcon, LinkedInIcon } from "../../components/icons/SocialIcons";
 import { defaultContent } from "../../data/defaultContent";
@@ -686,6 +686,17 @@ export function MessagesSection({
   const [filter, setFilter] = useState<"all" | "unread" | "read">("all");
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  const tokenRef = useRef(token);
+  const onUnauthorizedRef = useRef(onUnauthorized);
+  const setContentRef = useRef(setContent);
+
+  useEffect(() => {
+    tokenRef.current = token;
+    onUnauthorizedRef.current = onUnauthorized;
+    setContentRef.current = setContent;
+  }, [token, onUnauthorized, setContent]);
 
   const messages = content.messages ?? [];
   const filtered = messages.filter((msg) => {
@@ -695,26 +706,42 @@ export function MessagesSection({
   });
 
   const refreshMessages = useCallback(async () => {
+    const controller = new AbortController();
     setLoading(true);
+    setError("");
+
+    const timeoutId = window.setTimeout(() => controller.abort(), 12000);
+
     try {
       const response = await fetch(`/api/admin/messages?_=${Date.now()}`, {
         cache: "no-store",
-        headers: { Authorization: `Bearer ${token}` },
+        signal: controller.signal,
+        headers: { Authorization: `Bearer ${tokenRef.current}` },
       });
 
       if (response.status === 401) {
-        onUnauthorized();
+        onUnauthorizedRef.current();
         return;
       }
 
-      if (!response.ok) return;
+      if (!response.ok) {
+        setError("Mesajlar yüklenemedi.");
+        return;
+      }
 
       const data = (await response.json()) as { messages?: ContactMessage[] };
-      setContent((prev) => ({ ...prev, messages: data.messages ?? [] }));
+      setContentRef.current((prev) => ({ ...prev, messages: data.messages ?? [] }));
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") {
+        setError("Mesaj yükleme zaman aşımı.");
+        return;
+      }
+      setError("Mesajlar yüklenemedi.");
     } finally {
+      window.clearTimeout(timeoutId);
       setLoading(false);
     }
-  }, [token, onUnauthorized, setContent]);
+  }, []);
 
   useEffect(() => {
     void refreshMessages();
@@ -722,6 +749,8 @@ export function MessagesSection({
 
   const persistMessages = async (next: ContactMessage[]) => {
     setSaving(true);
+    setError("");
+    const previous = messages;
     setContent((prev) => ({ ...prev, messages: next }));
 
     try {
@@ -740,14 +769,16 @@ export function MessagesSection({
       }
 
       if (!response.ok) {
-        await refreshMessages();
+        setContent((prev) => ({ ...prev, messages: previous }));
+        setError("Mesaj güncellenemedi. Tekrar deneyin.");
         return;
       }
 
       const data = (await response.json()) as { messages?: ContactMessage[] };
       setContent((prev) => ({ ...prev, messages: data.messages ?? next }));
     } catch {
-      await refreshMessages();
+      setContent((prev) => ({ ...prev, messages: previous }));
+      setError("Mesaj güncellenemedi. Bağlantıyı kontrol edin.");
     } finally {
       setSaving(false);
     }
@@ -790,10 +821,17 @@ export function MessagesSection({
             Okundu ({messages.filter((m) => m.read).length})
           </button>
         </div>
-        <button type="button" className={styles.secondaryBtnSmall} onClick={() => void refreshMessages()} disabled={loading || saving}>
-          {loading ? "Yükleniyor..." : "Yenile"}
+        <button
+          type="button"
+          className={styles.secondaryBtnSmall}
+          onClick={() => void refreshMessages()}
+          disabled={loading || saving}
+        >
+          {loading ? "Yükleniyor..." : saving ? "Kaydediliyor..." : "Yenile"}
         </button>
       </div>
+
+      {error && <p className={styles.error}>{error}</p>}
 
       {filtered.length === 0 ? (
         <div className={styles.emptyState}>
@@ -823,17 +861,18 @@ export function MessagesSection({
                     type="button"
                     className={styles.secondaryBtnSmall}
                     onClick={() => markRead(msg.id)}
-                    disabled={saving}
+                    disabled={saving || loading}
                   >
-                    Okundu işaretle
+                    {saving ? "Kaydediliyor..." : "Okundu işaretle"}
                   </button>
                 )}
+                {msg.read && <span className={styles.badgeLive}>Okundu</span>}
                 <button
                   type="button"
                   className={styles.iconBtn}
                   onClick={() => removeMessage(msg.id)}
                   aria-label="Sil"
-                  disabled={saving}
+                  disabled={saving || loading}
                 >
                   <IconTrash />
                 </button>
