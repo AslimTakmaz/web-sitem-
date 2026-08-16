@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useMemo, useState, type Dispatch, type ReactNode, type SetStateAction } from "react";
 import { ThemeToggle } from "../../components/ThemeToggle/ThemeToggle";
+import { GitHubIcon, LinkedInIcon } from "../../components/icons/SocialIcons";
 import { defaultContent } from "../../data/defaultContent";
+import {
+  SOCIAL_PLATFORMS,
+  SocialPlatformIcon,
+  findPlatformByLabel,
+  type SocialPlatformId,
+} from "../../data/socialPlatforms";
 import { normalizeHexColor } from "../../lib/themeStorage";
 import type {
   ContactMessage,
@@ -841,6 +848,16 @@ export function MessagesSection({
 
 export function SocialSection({ content, setContent }: SectionProps) {
   const { personal } = content;
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<SocialPlatformId | null>(null);
+  const [urlDraft, setUrlDraft] = useState("");
+
+  const usedLabels = useMemo(
+    () => new Set(personal.generalExtras.map((field) => field.label.trim().toLowerCase())),
+    [personal.generalExtras],
+  );
+
+  const selectedPlatform = SOCIAL_PLATFORMS.find((platform) => platform.id === selectedId) ?? null;
 
   const updateExtra = (id: string, patch: { label?: string; value?: string }) => {
     setContent((prev) => ({
@@ -852,17 +869,40 @@ export function SocialSection({ content, setContent }: SectionProps) {
     }));
   };
 
-  const addExtra = () => {
+  const openPicker = () => {
+    setSelectedId(null);
+    setUrlDraft("");
+    setPickerOpen(true);
+  };
+
+  const closePicker = () => {
+    setPickerOpen(false);
+    setSelectedId(null);
+    setUrlDraft("");
+  };
+
+  const addSelectedPlatform = () => {
+    if (!selectedPlatform) return;
+
+    const label = selectedPlatform.label;
+    const alreadyAdded = usedLabels.has(label.toLowerCase());
+    if (alreadyAdded && selectedPlatform.id !== "custom") return;
+
     setContent((prev) => ({
       ...prev,
       personal: {
         ...prev.personal,
         generalExtras: [
           ...prev.personal.generalExtras,
-          { id: crypto.randomUUID(), label: "Instagram", value: "" },
+          {
+            id: crypto.randomUUID(),
+            label,
+            value: urlDraft.trim(),
+          },
         ],
       },
     }));
+    closePicker();
   };
 
   const removeExtra = (id: string) => {
@@ -879,63 +919,159 @@ export function SocialSection({ content, setContent }: SectionProps) {
     <div className={styles.stack}>
       <div className={styles.formGrid}>
         <Field label="GitHub">
-          <input
-            className={styles.input}
-            value={personal.social.github}
-            onChange={(e) =>
-              setContent((prev) => ({
-                ...prev,
-                personal: { ...prev.personal, social: { ...prev.personal.social, github: e.target.value } },
-              }))
-            }
-          />
+          <div className={styles.socialPrimaryRow}>
+            <span className={styles.socialPrimaryIcon} aria-hidden="true">
+              <GitHubIcon />
+            </span>
+            <input
+              className={styles.input}
+              value={personal.social.github}
+              onChange={(e) =>
+                setContent((prev) => ({
+                  ...prev,
+                  personal: { ...prev.personal, social: { ...prev.personal.social, github: e.target.value } },
+                }))
+              }
+            />
+          </div>
         </Field>
         <Field label="LinkedIn">
-          <input
-            className={styles.input}
-            value={personal.social.linkedin}
-            onChange={(e) =>
-              setContent((prev) => ({
-                ...prev,
-                personal: { ...prev.personal, social: { ...prev.personal.social, linkedin: e.target.value } },
-              }))
-            }
-          />
+          <div className={styles.socialPrimaryRow}>
+            <span className={styles.socialPrimaryIcon} aria-hidden="true">
+              <LinkedInIcon />
+            </span>
+            <input
+              className={styles.input}
+              value={personal.social.linkedin}
+              onChange={(e) =>
+                setContent((prev) => ({
+                  ...prev,
+                  personal: { ...prev.personal, social: { ...prev.personal.social, linkedin: e.target.value } },
+                }))
+              }
+            />
+          </div>
         </Field>
       </div>
 
       <Card
         title="Diğer Sosyal Medya"
         action={
-          <button type="button" className={styles.secondaryBtnSmall} onClick={addExtra}>+ Ekle</button>
+          <button type="button" className={styles.secondaryBtnSmall} onClick={openPicker}>
+            + Ekle
+          </button>
         }
       >
         {personal.generalExtras.length === 0 ? (
-          <p className={styles.emptyText}>Instagram, YouTube vb. ekleyebilirsin.</p>
+          <p className={styles.emptyText}>Instagram, YouTube vb. eklemek için + Ekle’ye bas.</p>
         ) : (
           <ul className={styles.socialList}>
-            {personal.generalExtras.map((field) => (
-              <li key={field.id} className={styles.socialItem}>
-                <input
-                  className={styles.input}
-                  value={field.label}
-                  onChange={(e) => updateExtra(field.id, { label: e.target.value })}
-                  placeholder="Platform"
-                />
-                <input
-                  className={styles.input}
-                  value={field.value}
-                  onChange={(e) => updateExtra(field.id, { value: e.target.value })}
-                  placeholder="https://..."
-                />
-                <button type="button" className={styles.iconBtn} onClick={() => removeExtra(field.id)} aria-label="Sil">
-                  <IconTrash />
-                </button>
-              </li>
-            ))}
+            {personal.generalExtras.map((field) => {
+              const platform = findPlatformByLabel(field.label);
+              return (
+                <li key={field.id} className={styles.socialItem}>
+                  <span
+                    className={styles.socialItemIcon}
+                    style={platform ? { color: platform.color } : undefined}
+                    aria-hidden="true"
+                  >
+                    <SocialPlatformIcon id={platform?.id ?? "custom"} />
+                  </span>
+                  <input
+                    className={styles.input}
+                    value={field.label}
+                    onChange={(e) => updateExtra(field.id, { label: e.target.value })}
+                    placeholder="Platform"
+                  />
+                  <input
+                    className={styles.input}
+                    value={field.value}
+                    onChange={(e) => updateExtra(field.id, { value: e.target.value })}
+                    placeholder={platform?.placeholder ?? "https://..."}
+                  />
+                  <button type="button" className={styles.iconBtn} onClick={() => removeExtra(field.id)} aria-label="Sil">
+                    <IconTrash />
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         )}
       </Card>
+
+      {pickerOpen && (
+        <div className={styles.modalOverlay} onClick={closePicker} role="presentation">
+          <div
+            className={styles.modal}
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="social-picker-title"
+          >
+            <div className={styles.modalHeader}>
+              <h3 id="social-picker-title">Sosyal medya seç</h3>
+              <button type="button" className={styles.iconBtnNeutral} onClick={closePicker} aria-label="Kapat">
+                ×
+              </button>
+            </div>
+
+            <div className={styles.platformGrid}>
+              {SOCIAL_PLATFORMS.map((platform) => {
+                const added = usedLabels.has(platform.label.toLowerCase()) && platform.id !== "custom";
+                const active = selectedId === platform.id;
+                return (
+                  <button
+                    key={platform.id}
+                    type="button"
+                    className={`${styles.platformCard} ${active ? styles.platformCardActive : ""} ${added ? styles.platformCardDisabled : ""}`}
+                    onClick={() => {
+                      if (added) return;
+                      setSelectedId(platform.id);
+                      setUrlDraft("");
+                    }}
+                    disabled={added}
+                    title={added ? "Zaten eklendi" : platform.label}
+                  >
+                    <span className={styles.platformIcon} style={{ color: platform.color }}>
+                      <SocialPlatformIcon id={platform.id} />
+                    </span>
+                    <span className={styles.platformLabel}>{platform.label}</span>
+                    {added && <span className={styles.platformBadge}>Eklendi</span>}
+                  </button>
+                );
+              })}
+            </div>
+
+            {selectedPlatform && (
+              <div className={styles.platformForm}>
+                <Field label={`${selectedPlatform.label} linki`} fullWidth>
+                  <input
+                    className={styles.input}
+                    value={urlDraft}
+                    onChange={(e) => setUrlDraft(e.target.value)}
+                    placeholder={selectedPlatform.placeholder}
+                    autoFocus
+                  />
+                </Field>
+              </div>
+            )}
+
+            <div className={styles.modalActions}>
+              <button type="button" className={styles.secondaryBtn} onClick={closePicker}>
+                İptal
+              </button>
+              <button
+                type="button"
+                className={styles.primaryBtn}
+                onClick={addSelectedPlatform}
+                disabled={!selectedPlatform}
+              >
+                Ekle
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

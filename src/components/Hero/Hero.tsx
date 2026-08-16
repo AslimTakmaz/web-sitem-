@@ -1,4 +1,5 @@
 import { useSiteContent } from "../../context/SiteContentContext";
+import { resolveSocialIcon } from "../../data/socialPlatforms";
 import { ExternalLinkIcon, GitHubIcon, LinkedInIcon } from "../icons/SocialIcons";
 import styles from "./Hero.module.css";
 
@@ -73,7 +74,7 @@ export function Hero() {
                   className={styles.socialLink}
                   aria-label={extra.label}
                 >
-                  <ExternalLinkIcon />
+                  {resolveSocialIcon(extra.label) ?? <ExternalLinkIcon />}
                 </a>
               ))}
           </div>
