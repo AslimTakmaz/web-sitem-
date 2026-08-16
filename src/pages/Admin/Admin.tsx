@@ -107,6 +107,7 @@ export function AdminPage() {
   const [contentLoading, setContentLoading] = useState(false);
   const [usingDefaultContent, setUsingDefaultContent] = useState(false);
   const contentRef = useRef(content);
+  const loadGenerationRef = useRef(0);
 
   const dismissToast = useCallback(() => setToast(null), []);
   const showToast = useCallback((message: string, type: "success" | "error") => {
@@ -137,29 +138,36 @@ export function AdminPage() {
   useEffect(() => {
     if (tab === "colors") {
       applyThemePreview(content.theme);
+      return;
     }
+    applyTheme(content.theme);
   }, [content.theme, tab]);
 
   useEffect(() => {
     if (!token) return;
 
     const controller = new AbortController();
+    const loadId = ++loadGenerationRef.current;
     let settled = false;
     setContentLoading(true);
 
     const finish = () => {
       if (settled) return;
       settled = true;
-      setContentLoading(false);
+      if (loadGenerationRef.current === loadId) {
+        setContentLoading(false);
+      }
     };
 
     const timeoutId = window.setTimeout(() => {
       controller.abort();
       finish();
-      showToastRef.current(
-        "İçerik yüklemesi zaman aşımına uğradı. Önbellekteki veri gösteriliyor.",
-        "error",
-      );
+      if (loadGenerationRef.current === loadId) {
+        showToastRef.current(
+          "İçerik yüklemesi zaman aşımına uğradı. Önbellekteki veri gösteriliyor.",
+          "error",
+        );
+      }
     }, 15000);
 
     fetch(`/api/admin/content?_=${Date.now()}`, {
@@ -173,9 +181,12 @@ export function AdminPage() {
           throw new Error("Yetkisiz");
         }
         if (!res.ok) throw new Error("İçerik yüklenemedi");
+        if (loadGenerationRef.current !== loadId) return;
 
         setUsingDefaultContent(res.headers.get("X-Content-Source") === "default");
         const data = (await res.json()) as SiteContent;
+        if (loadGenerationRef.current !== loadId) return;
+
         const normalized = normalizeContent(data);
         setContent(normalized);
         applyTheme(normalized.theme);
@@ -184,6 +195,7 @@ export function AdminPage() {
       .catch((error) => {
         if (controller.signal.aborted) return;
         if (error instanceof Error && error.message === "Yetkisiz") return;
+        if (loadGenerationRef.current !== loadId) return;
         showToastRef.current("İçerik yüklenemedi. Sayfayı yenileyip tekrar deneyin.", "error");
       })
       .finally(() => {
@@ -407,8 +419,8 @@ export function AdminPage() {
           </div>
           <div className={styles.topbarActions}>
             <ThemeToggle />
-            <button type="button" className={styles.primaryBtn} onClick={handleSave} disabled={saving}>
-              {saving ? "Kaydediliyor..." : "Kaydet"}
+            <button type="button" className={styles.primaryBtn} onClick={handleSave} disabled={saving || contentLoading}>
+              {saving ? "Kaydediliyor..." : contentLoading ? "Yükleniyor..." : "Kaydet"}
             </button>
           </div>
         </header>

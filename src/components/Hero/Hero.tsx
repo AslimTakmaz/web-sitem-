@@ -17,6 +17,9 @@ export function Hero() {
           <p className={styles.greeting}>Merhaba, ben</p>
           <h1 className={styles.name}>{personal.name}</h1>
           <p className={styles.title}>{personal.title}</p>
+          {personal.statusLine?.trim() && (
+            <p className={styles.statusLine}>{personal.statusLine}</p>
+          )}
           <p className={styles.tagline}>{personal.tagline}</p>
 
           <ul className={styles.techList} aria-label="Kullandığım teknolojiler">
@@ -45,24 +48,28 @@ export function Hero() {
           </div>
 
           <div className={styles.social}>
-            <a
-              href={personal.social.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.socialLink}
-              aria-label="GitHub profili"
-            >
-              <GitHubIcon />
-            </a>
-            <a
-              href={personal.social.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.socialLink}
-              aria-label="LinkedIn profili"
-            >
-              <LinkedInIcon />
-            </a>
+            {personal.social.github.trim() && (
+              <a
+                href={personal.social.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.socialLink}
+                aria-label="GitHub profili"
+              >
+                <GitHubIcon />
+              </a>
+            )}
+            {personal.social.linkedin.trim() && (
+              <a
+                href={personal.social.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.socialLink}
+                aria-label="LinkedIn profili"
+              >
+                <LinkedInIcon />
+              </a>
+            )}
             {personal.generalExtras
               .filter((extra) => /^https?:\/\//i.test(extra.value.trim()))
               .map((extra) => (

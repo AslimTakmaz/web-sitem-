@@ -1,7 +1,12 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import type { SiteContent } from "../../src/types/siteContent";
 import { getBearerToken, verifyAdminToken } from "../lib/auth.js";
-import { loadMessages, loadSiteContent, saveSiteContent } from "../lib/contentStore.js";
+import {
+  ensureMessagesMigrated,
+  loadMessages,
+  loadSiteContent,
+  saveSiteContent,
+} from "../lib/contentStore.js";
 import { normalizeContent } from "../lib/normalizeContent.js";
 
 function parseSiteContentBody(req: VercelRequest): SiteContent {
@@ -28,7 +33,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "GET") {
     try {
       const { content, source } = await loadSiteContent();
-      const messages = await loadMessages(content.messages ?? []);
+      const messages = await ensureMessagesMigrated(content.messages ?? []);
       res.setHeader("Cache-Control", "no-store, max-age=0");
       res.setHeader("X-Content-Source", source);
       return res.status(200).json({ ...content, messages });
@@ -40,8 +45,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "PUT") {
     try {
       const parsed = parseSiteContentBody(req);
+      const { content: current } = await loadSiteContent();
+      const messages = await ensureMessagesMigrated(
+        parsed.messages?.length ? parsed.messages : (current.messages ?? []),
+      );
       const saved = await saveSiteContent(normalizeContent(parsed));
-      const messages = await loadMessages([]);
       res.setHeader("Cache-Control", "no-store");
       return res.status(200).json({ ...saved, messages });
     } catch (error) {

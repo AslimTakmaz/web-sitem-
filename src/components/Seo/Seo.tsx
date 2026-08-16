@@ -6,11 +6,18 @@ export function Seo() {
 
   useEffect(() => {
     const { siteUrl, name, title, tagline, contact, social } = content.personal;
-    const pageTitle = `${name} | ${title} | Portföy`;
+    const seo = content.seo;
+    const pageTitle = seo.title?.trim() || `${name} | ${title} | Portföy`;
+    const description =
+      seo.description?.trim() ||
+      `${name} — ${title}. ${tagline}`;
+    const keywords =
+      seo.keywords?.trim() ||
+      `${name}, yazılım geliştirici, portföy, web developer, React, TypeScript`;
 
     document.title = pageTitle;
 
-    const setMeta = (key: string, content: string, property = false) => {
+    const setMeta = (key: string, value: string, property = false) => {
       const attr = property ? "property" : "name";
       let el = document.querySelector(`meta[${attr}="${key}"]`);
       if (!el) {
@@ -18,24 +25,18 @@ export function Seo() {
         el.setAttribute(attr, key);
         document.head.appendChild(el);
       }
-      el.setAttribute("content", content);
+      el.setAttribute("content", value);
     };
 
-    setMeta(
-      "description",
-      `${name} — ${title}. ${tagline} aslimtakmazweb kişisel portföy sitesi.`,
-    );
-    setMeta(
-      "keywords",
-      "Aslım Takmaz, aslim takmaz, aslimtakmazweb, yazılım geliştirici, portföy, web developer",
-    );
+    setMeta("description", description);
+    setMeta("keywords", keywords);
     setMeta("og:title", pageTitle, true);
-    setMeta("og:description", tagline, true);
+    setMeta("og:description", description, true);
     setMeta("og:url", siteUrl, true);
     setMeta("og:type", "website", true);
     setMeta("twitter:card", "summary");
     setMeta("twitter:title", pageTitle);
-    setMeta("twitter:description", tagline);
+    setMeta("twitter:description", description);
 
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) {
@@ -44,6 +45,10 @@ export function Seo() {
       document.head.appendChild(canonical);
     }
     canonical.setAttribute("href", siteUrl);
+
+    const sameAs = [social.github, social.linkedin, ...content.personal.generalExtras.map((e) => e.value)]
+      .map((url) => url.trim())
+      .filter((url) => /^https?:\/\//i.test(url));
 
     const schema = {
       "@context": "https://schema.org",
@@ -54,15 +59,14 @@ export function Seo() {
           jobTitle: title,
           url: siteUrl,
           email: contact.email,
-          sameAs: [social.github, social.linkedin],
+          sameAs,
           description: tagline,
         },
         {
           "@type": "WebSite",
-          name: "aslimtakmazweb",
-          alternateName: name,
+          name,
           url: siteUrl,
-          description: `${name} kişisel portföy web sitesi`,
+          description,
         },
       ],
     };
@@ -75,7 +79,7 @@ export function Seo() {
       document.head.appendChild(script);
     }
     script.textContent = JSON.stringify(schema);
-  }, [content.personal]);
+  }, [content.personal, content.seo]);
 
   return null;
 }

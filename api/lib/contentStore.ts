@@ -215,26 +215,47 @@ function normalizeMessage(item: ContactMessage): ContactMessage {
   };
 }
 
-export async function loadMessages(
-  fallback: ContactMessage[] = [],
-): Promise<ContactMessage[]> {
+/** Blob dosyası varsa dizi döner (boş dahil). Dosya yoksa null. */
+export async function loadMessagesFromStore(): Promise<ContactMessage[] | null> {
   try {
     const result = await blobGet(MESSAGES_PATHNAME);
     if (result?.stream) {
       const text = await new Response(result.stream).text();
       const parsed = JSON.parse(text) as unknown;
       if (Array.isArray(parsed)) {
-        const messages = parsed.filter(isContactMessage).map(normalizeMessage);
-        if (messages.length > 0) {
-          return messages.slice(0, MAX_MESSAGES);
-        }
+        return parsed.filter(isContactMessage).map(normalizeMessage).slice(0, MAX_MESSAGES);
       }
     }
   } catch {
-    // Mesaj dosyası yoksa fallback kullan
+    // dosya yok
+  }
+  return null;
+}
+
+export async function loadMessages(
+  fallback: ContactMessage[] = [],
+): Promise<ContactMessage[]> {
+  const fromStore = await loadMessagesFromStore();
+  if (fromStore !== null) {
+    return fromStore;
+  }
+  return fallback.filter(isContactMessage).map(normalizeMessage).slice(0, MAX_MESSAGES);
+}
+
+/** Legacy site-content mesajlarını ayrı blob’a taşı (bir kez). */
+export async function ensureMessagesMigrated(
+  legacy: ContactMessage[] = [],
+): Promise<ContactMessage[]> {
+  const fromStore = await loadMessagesFromStore();
+  if (fromStore !== null) {
+    return fromStore;
   }
 
-  return fallback.filter(isContactMessage).map(normalizeMessage).slice(0, MAX_MESSAGES);
+  const migrated = legacy.filter(isContactMessage).map(normalizeMessage).slice(0, MAX_MESSAGES);
+  if (migrated.length > 0) {
+    return saveMessages(migrated);
+  }
+  return [];
 }
 
 export async function saveMessages(messages: ContactMessage[]): Promise<ContactMessage[]> {

@@ -15,31 +15,37 @@ export function Footer() {
           &copy; {year} {personal.name}. Tüm hakları saklıdır.
         </p>
         <div className={styles.links}>
-          <a
-            href={personal.social.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.link}
-          >
-            <GitHubIcon />
-            GitHub
-          </a>
-          <a
-            href={personal.social.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.link}
-          >
-            <LinkedInIcon />
-            LinkedIn
-          </a>
-          <a
-            href={`mailto:${personal.contact.email}`}
-            className={styles.link}
-          >
-            <EmailIcon />
-            E-posta
-          </a>
+          {personal.social.github.trim() && (
+            <a
+              href={personal.social.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.link}
+            >
+              <GitHubIcon />
+              GitHub
+            </a>
+          )}
+          {personal.social.linkedin.trim() && (
+            <a
+              href={personal.social.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.link}
+            >
+              <LinkedInIcon />
+              LinkedIn
+            </a>
+          )}
+          {personal.contact.email.trim() && (
+            <a
+              href={`mailto:${personal.contact.email}`}
+              className={styles.link}
+            >
+              <EmailIcon />
+              E-posta
+            </a>
+          )}
         </div>
       </div>
     </footer>

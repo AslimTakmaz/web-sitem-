@@ -66,6 +66,14 @@ function ProjectModal({
           </button>
         </div>
         <div className={styles.modalBody}>
+          {project.imageUrl?.trim() && (
+            <img
+              className={styles.modalImage}
+              src={project.imageUrl}
+              alt={`${project.name} görseli`}
+              loading="lazy"
+            />
+          )}
           <p className={styles.modalDescription}>{project.description}</p>
 
           <p className={styles.featuresTitle}>Özellikler</p>
@@ -114,6 +122,16 @@ function ProjectCard({ project }: { project: Project }) {
   return (
     <>
       <article className={styles.card}>
+        {project.imageUrl?.trim() && (
+          <div className={styles.cardImageWrap}>
+            <img
+              className={styles.cardImage}
+              src={project.imageUrl}
+              alt=""
+              loading="lazy"
+            />
+          </div>
+        )}
         <div className={styles.cardHeader}>
           <h3 className={styles.cardTitle}>{project.name}</h3>
           {project.status && <ProjectStatusBadge status={project.status} />}
@@ -159,7 +177,7 @@ function ProjectCard({ project }: { project: Project }) {
 
 export function Projects() {
   const { content } = useSiteContent();
-  const projects = content.projects;
+  const projects = content.projects.filter((project) => project.published !== false);
 
   return (
     <section id="projects" className={styles.section} aria-label="Projeler">

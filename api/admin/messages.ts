@@ -1,7 +1,12 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import type { ContactMessage } from "../../src/types/siteContent";
 import { getBearerToken, verifyAdminToken } from "../lib/auth.js";
-import { loadMessages, loadSiteContent, saveMessages } from "../lib/contentStore.js";
+import {
+  ensureMessagesMigrated,
+  loadMessagesFromStore,
+  loadSiteContent,
+  saveMessages,
+} from "../lib/contentStore.js";
 
 function parseMessagesBody(req: VercelRequest): ContactMessage[] {
   const raw = req.body;
@@ -28,11 +33,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === "GET") {
     try {
-      // Önce ayrı mesaj dosyası; yoksa site içeriğindeki eski mesajlara düş
-      let messages = await loadMessages();
-      if (messages.length === 0) {
+      const fromStore = await loadMessagesFromStore();
+      let messages = fromStore;
+      if (messages === null) {
         const { content } = await loadSiteContent();
-        messages = await loadMessages(content.messages ?? []);
+        messages = await ensureMessagesMigrated(content.messages ?? []);
       }
       res.setHeader("Cache-Control", "no-store, max-age=0");
       return res.status(200).json({ messages });
