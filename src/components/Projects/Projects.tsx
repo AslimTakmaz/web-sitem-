@@ -124,16 +124,16 @@ function ProjectCard({ project }: { project: Project }) {
   return (
     <>
       <article className={styles.card}>
-        {project.imageUrl?.trim() && (
-          <div className={styles.cardImageWrap}>
+        <div className={styles.cardImageWrap}>
+          {project.imageUrl?.trim() ? (
             <img
               className={styles.cardImage}
               src={project.imageUrl}
               alt=""
               loading="lazy"
             />
-          </div>
-        )}
+          ) : null}
+        </div>
         <div className={styles.cardHeader}>
           <h3 className={styles.cardTitle}>{project.name}</h3>
           {project.status === "in-progress" && (
