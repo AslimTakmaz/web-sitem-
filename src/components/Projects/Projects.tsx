@@ -127,7 +127,9 @@ function ProjectCard({ project }: { project: Project }) {
         <div className={styles.cardImageWrap}>
           {project.imageUrl?.trim() ? (
             <img
-              className={styles.cardImage}
+              className={`${styles.cardImage}${
+                project.id === "nazar-boncugu-app" ? ` ${styles.cardImageNazar}` : ""
+              }`}
               src={project.imageUrl}
               alt=""
               loading="lazy"
