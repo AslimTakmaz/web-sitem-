@@ -69,23 +69,6 @@ export const defaultContent: SiteContent = {
       },
     },
     {
-      id: "nazar-boncugu-app",
-      name: "Nazar Boncuğu",
-      description:
-        "Nazar duası dinleme ve nazar boncuğu deneyimi sunan Expo / React Native mobil uygulaması. Ana ekran widget’ı ve ses oynatma destekli.",
-      technologies: ["React Native", "Expo", "TypeScript"],
-      features: [
-        "Nazar duası dinleme",
-        "Özel nazar boncuğu tasarımları",
-        "Ana ekran widget’ı",
-        "Ses oynatma",
-        "iOS ve Android desteği",
-      ],
-      imageUrl: "/projects/nazar-boncugu.png",
-      published: true,
-      links: {},
-    },
-    {
       id: "stajyer-takip-paneli",
       name: "Stajyer Takip Paneli",
       description:
@@ -120,6 +103,23 @@ export const defaultContent: SiteContent = {
         "Sınırsız oyun modu",
       ],
       imageUrl: "/projects/sureli-tahmin.svg",
+      published: true,
+      links: {},
+    },
+    {
+      id: "nazar-boncugu-app",
+      name: "Nazar Boncuğu",
+      description:
+        "Nazar duası dinleme ve nazar boncuğu deneyimi sunan Expo / React Native mobil uygulaması. Ana ekran widget’ı ve ses oynatma destekli.",
+      technologies: ["React Native", "Expo", "TypeScript"],
+      features: [
+        "Nazar duası dinleme",
+        "Özel nazar boncuğu tasarımları",
+        "Ana ekran widget’ı",
+        "Ses oynatma",
+        "iOS ve Android desteği",
+      ],
+      imageUrl: "/projects/nazar-boncugu.png",
       published: true,
       links: {},
     },
