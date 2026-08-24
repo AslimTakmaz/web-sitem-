@@ -50,6 +50,23 @@ export const defaultContent: SiteContent = {
   },
   projects: [
     {
+      id: "sureli-tahmin",
+      name: "Süreli Tahmin",
+      description:
+        "Şarkının kısa bir kesitini dinleyip tahmin ettiğin web tabanlı müzik tahmin oyunu. Dinleme süresi kademeli artar; Türkçe ve global şarkı filtreleri desteklenir.",
+      technologies: ["Next.js", "React", "TypeScript", "Tailwind CSS"],
+      features: [
+        "Kademeli dinleme süreleri",
+        "Şarkı tahmin sistemi",
+        "Türkçe / Global filtre",
+        "Deezer ve YouTube entegrasyonu",
+        "Sınırsız oyun modu",
+      ],
+      imageUrl: "/projects/sureli-tahmin.svg",
+      published: true,
+      links: {},
+    },
+    {
       id: "nazar-boncugu-app",
       name: "Nazar Boncuğu",
       description:
