@@ -1,6 +1,11 @@
 import { defaultContent } from "./defaultContent";
 import type { Project, SiteContent } from "../types/siteContent";
 
+const LEGACY_TAGLINE =
+  "Modern web teknolojileri kullanarak kullanıcı odaklı web uygulamaları geliştiriyorum.";
+const LEGACY_SEO_DESCRIPTION =
+  "Aslım Takmaz — Software Development Intern. Modern web teknolojileri ile kullanıcı odaklı web uygulamaları geliştiriyorum.";
+
 /** Blob’da olmayan varsayılan projeleri öne ekler (silinen özel projeleri ezmez). */
 function mergeProjects(stored: Project[] | undefined, defaults: Project[]): Project[] {
   const list = stored ?? defaults;
@@ -13,12 +18,22 @@ function mergeProjects(stored: Project[] | undefined, defaults: Project[]): Proj
 }
 
 export function normalizeContent(data: SiteContent): SiteContent {
+  const tagline =
+    !data.personal?.tagline || data.personal.tagline === LEGACY_TAGLINE
+      ? defaultContent.personal.tagline
+      : data.personal.tagline;
+  const seoDescription =
+    !data.seo?.description || data.seo.description === LEGACY_SEO_DESCRIPTION
+      ? defaultContent.seo.description
+      : data.seo.description;
+
   return {
     ...defaultContent,
     ...data,
     personal: {
       ...defaultContent.personal,
       ...data.personal,
+      tagline,
       social: {
         ...defaultContent.personal.social,
         ...data.personal?.social,
@@ -47,6 +62,7 @@ export function normalizeContent(data: SiteContent): SiteContent {
     seo: {
       ...defaultContent.seo,
       ...data.seo,
+      description: seoDescription,
     },
     messages: data.messages ?? defaultContent.messages,
     theme: {

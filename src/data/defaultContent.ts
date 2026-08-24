@@ -6,7 +6,7 @@ export const defaultContent: SiteContent = {
     siteUrl: "https://aslimtakmaz-websitem.vercel.app",
     title: "Software Development Intern",
     tagline:
-      "Modern web teknolojileri kullanarak kullanıcı odaklı web uygulamaları geliştiriyorum.",
+      "Web siteleri ve mobil uygulamalar geliştirerek kullanıcı odaklı dijital deneyimler üretiyorum.",
     statusLine: "Staj ve iş birliği fırsatlarına açığım",
     social: {
       github: "https://github.com/AslimTakmaz",
@@ -128,8 +128,8 @@ export const defaultContent: SiteContent = {
   seo: {
     title: "Aslım Takmaz — Software Development Intern",
     description:
-      "Aslım Takmaz — Software Development Intern. Modern web teknolojileri ile kullanıcı odaklı web uygulamaları geliştiriyorum.",
-    keywords: "Aslım Takmaz, yazılım geliştirici, portföy, React, TypeScript",
+      "Aslım Takmaz — Software Development Intern. Web siteleri ve mobil uygulamalar geliştiriyorum.",
+    keywords: "Aslım Takmaz, yazılım geliştirici, portföy, React, TypeScript, mobil uygulama, Expo",
   },
   messages: [],
   theme: {
