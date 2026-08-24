@@ -124,20 +124,20 @@ function ProjectCard({ project }: { project: Project }) {
   return (
     <>
       <article className={styles.card}>
-        <div className={styles.cardImageWrap}>
-          {project.imageUrl?.trim() ? (
-            <img
-              className={`${styles.cardImage}${
-                project.id === "nazar-boncugu-app" ? ` ${styles.cardImageNazar}` : ""
-              }`}
-              src={project.imageUrl}
-              alt=""
-              loading="lazy"
-            />
-          ) : null}
-        </div>
         <div className={styles.cardHeader}>
-          <h3 className={styles.cardTitle}>{project.name}</h3>
+          <div className={styles.cardTitleRow}>
+            {project.imageUrl?.trim() ? (
+              <img
+                className={`${styles.cardImage}${
+                  project.id === "nazar-boncugu-app" ? ` ${styles.cardImageNazar}` : ""
+                }`}
+                src={project.imageUrl}
+                alt=""
+                loading="lazy"
+              />
+            ) : null}
+            <h3 className={styles.cardTitle}>{project.name}</h3>
+          </div>
           {project.status === "in-progress" && (
             <ProjectStatusBadge status={project.status} />
           )}

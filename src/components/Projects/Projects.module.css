@@ -60,31 +60,6 @@
   overflow: hidden;
 }
 
-.cardImageWrap {
-  flex-shrink: 0;
-  height: 96px;
-  margin: 0 0 0.875rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: none;
-}
-
-.cardImage {
-  max-width: 88px;
-  max-height: 88px;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  display: block;
-}
-
-.cardImageNazar {
-  max-width: 64px;
-  max-height: 64px;
-}
-
 .card:hover {
   border-color: var(--color-border-hover);
   box-shadow: var(--shadow-card-hover);
@@ -97,7 +72,26 @@
   justify-content: space-between;
   gap: 0.75rem;
   margin-bottom: 0.75rem;
-  min-height: 2.5rem;
+}
+
+.cardTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.cardImage {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  display: block;
+}
+
+.cardImageNazar {
+  width: 24px;
+  height: 24px;
 }
 
 .cardTitle {
