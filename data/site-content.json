@@ -43,25 +43,27 @@
   },
   "projects": [
     {
-      "id": "sureli-tahmin",
-      "name": "Süreli Tahmin",
-      "description": "Şarkının kısa bir kesitini dinleyip tahmin ettiğin web tabanlı müzik tahmin oyunu. Dinleme süresi kademeli artar; Türkçe ve global şarkı filtreleri desteklenir.",
+      "id": "kisisel-portfolio",
+      "name": "Portföy Web Sitesi",
+      "description": "Yazılım geliştirme yolculuğumu, projelerimi ve iletişim kanallarımı sergileyen modern ve responsive kişisel portföy sitesi.",
       "technologies": [
-        "Next.js",
         "React",
         "TypeScript",
-        "Tailwind CSS"
+        "Vite",
+        "CSS Modules"
       ],
       "features": [
-        "Kademeli dinleme süreleri",
-        "Şarkı tahmin sistemi",
-        "Türkçe / Global filtre",
-        "Deezer ve YouTube entegrasyonu",
-        "Sınırsız oyun modu"
+        "Koyu / açık tema",
+        "Responsive tasarım",
+        "SEO ve Google Search Console",
+        "Proje vitrin alanı",
+        "İletişim bölümü",
+        "Vercel deploy"
       ],
-      "imageUrl": "/projects/sureli-tahmin.svg",
       "published": true,
-      "links": {}
+      "links": {
+        "github": "https://github.com/AslimTakmaz/web-sitem-"
+      }
     },
     {
       "id": "nazar-boncugu-app",
@@ -109,27 +111,25 @@
       }
     },
     {
-      "id": "kisisel-portfolio",
-      "name": "Portföy Web Sitesi",
-      "description": "Yazılım geliştirme yolculuğumu, projelerimi ve iletişim kanallarımı sergileyen modern ve responsive kişisel portföy sitesi.",
+      "id": "sureli-tahmin",
+      "name": "Süreli Tahmin",
+      "description": "Şarkının kısa bir kesitini dinleyip tahmin ettiğin web tabanlı müzik tahmin oyunu. Dinleme süresi kademeli artar; Türkçe ve global şarkı filtreleri desteklenir.",
       "technologies": [
+        "Next.js",
         "React",
         "TypeScript",
-        "Vite",
-        "CSS Modules"
+        "Tailwind CSS"
       ],
       "features": [
-        "Koyu / açık tema",
-        "Responsive tasarım",
-        "SEO ve Google Search Console",
-        "Proje vitrin alanı",
-        "İletişim bölümü",
-        "Vercel deploy"
+        "Kademeli dinleme süreleri",
+        "Şarkı tahmin sistemi",
+        "Türkçe / Global filtre",
+        "Deezer ve YouTube entegrasyonu",
+        "Sınırsız oyun modu"
       ],
+      "imageUrl": "/projects/sureli-tahmin.svg",
       "published": true,
-      "links": {
-        "github": "https://github.com/AslimTakmaz/web-sitem-"
-      }
+      "links": {}
     }
   ],
   "skills": [

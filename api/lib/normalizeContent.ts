@@ -17,12 +17,14 @@ function getDefaults(): SiteContent {
   return cachedDefaults;
 }
 
-/** Blob’da olmayan varsayılan projeleri öne ekler (silinen özel projeleri ezmez). */
+/** Varsayılan sırayı korur; Blob’daki düzenlemeleri id ile birleştirir. */
 function mergeProjects(stored: Project[] | undefined, defaults: Project[]): Project[] {
   const list = stored ?? defaults;
-  const ids = new Set(list.map((p) => p.id));
-  const missing = defaults.filter((p) => !ids.has(p.id));
-  return [...missing, ...list].map((project) => ({
+  const byId = new Map(list.map((p) => [p.id, p]));
+  const defaultIds = new Set(defaults.map((p) => p.id));
+  const ordered = defaults.map((project) => byId.get(project.id) ?? project);
+  const extras = list.filter((p) => !defaultIds.has(p.id));
+  return [...ordered, ...extras].map((project) => ({
     ...project,
     published: project.published ?? true,
   }));
