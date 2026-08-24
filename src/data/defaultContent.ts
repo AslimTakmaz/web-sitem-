@@ -64,7 +64,6 @@ export const defaultContent: SiteContent = {
       ],
       imageUrl: "/projects/nazar-boncugu.png",
       published: true,
-      status: "completed",
       links: {},
     },
     {

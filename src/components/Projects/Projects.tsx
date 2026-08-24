@@ -54,7 +54,9 @@ function ProjectModal({
             <h3 id="modal-title" className={styles.modalTitle}>
               {project.name}
             </h3>
-            {project.status && <ProjectStatusBadge status={project.status} />}
+            {project.status === "in-progress" && (
+              <ProjectStatusBadge status={project.status} />
+            )}
           </div>
           <button
             type="button"
@@ -134,7 +136,9 @@ function ProjectCard({ project }: { project: Project }) {
         )}
         <div className={styles.cardHeader}>
           <h3 className={styles.cardTitle}>{project.name}</h3>
-          {project.status && <ProjectStatusBadge status={project.status} />}
+          {project.status === "in-progress" && (
+            <ProjectStatusBadge status={project.status} />
+          )}
         </div>
         <p className={styles.cardDescription}>{project.description}</p>
 
