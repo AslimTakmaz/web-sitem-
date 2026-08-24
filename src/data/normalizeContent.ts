@@ -1,5 +1,16 @@
 import { defaultContent } from "./defaultContent";
-import type { SiteContent } from "../types/siteContent";
+import type { Project, SiteContent } from "../types/siteContent";
+
+/** Blob’da olmayan varsayılan projeleri öne ekler (silinen özel projeleri ezmez). */
+function mergeProjects(stored: Project[] | undefined, defaults: Project[]): Project[] {
+  const list = stored ?? defaults;
+  const ids = new Set(list.map((p) => p.id));
+  const missing = defaults.filter((p) => !ids.has(p.id));
+  return [...missing, ...list].map((project) => ({
+    ...project,
+    published: project.published ?? true,
+  }));
+}
 
 export function normalizeContent(data: SiteContent): SiteContent {
   return {
@@ -30,10 +41,7 @@ export function normalizeContent(data: SiteContent): SiteContent {
         extras: data.personal?.about?.extras ?? [],
       },
     },
-    projects: (data.projects ?? defaultContent.projects).map((project) => ({
-      ...project,
-      published: project.published ?? true,
-    })),
+    projects: mergeProjects(data.projects, defaultContent.projects),
     skills: data.skills ?? defaultContent.skills,
     experiences: data.experiences ?? defaultContent.experiences,
     seo: {

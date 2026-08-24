@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import type { SiteContent } from "../../src/types/siteContent";
+import type { Project, SiteContent } from "../../src/types/siteContent";
 
 let cachedDefaults: SiteContent | null = null;
 
@@ -10,6 +10,17 @@ function getDefaults(): SiteContent {
     cachedDefaults = JSON.parse(readFileSync(filePath, "utf8")) as SiteContent;
   }
   return cachedDefaults;
+}
+
+/** Blob’da olmayan varsayılan projeleri öne ekler (silinen özel projeleri ezmez). */
+function mergeProjects(stored: Project[] | undefined, defaults: Project[]): Project[] {
+  const list = stored ?? defaults;
+  const ids = new Set(list.map((p) => p.id));
+  const missing = defaults.filter((p) => !ids.has(p.id));
+  return [...missing, ...list].map((project) => ({
+    ...project,
+    published: project.published ?? true,
+  }));
 }
 
 export function normalizeContent(data: SiteContent): SiteContent {
@@ -44,10 +55,7 @@ export function normalizeContent(data: SiteContent): SiteContent {
         extras: data.personal?.about?.extras ?? [],
       },
     },
-    projects: (data.projects ?? defaults.projects).map((project) => ({
-      ...project,
-      published: project.published ?? true,
-    })),
+    projects: mergeProjects(data.projects, defaults.projects),
     skills: data.skills ?? defaults.skills,
     experiences: data.experiences ?? defaults.experiences,
     seo: {
