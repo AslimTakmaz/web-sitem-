@@ -28,6 +28,14 @@ function mergeProjects(stored: Project[] | undefined, defaults: Project[]): Proj
   }));
 }
 
+/** Blob’da olmayan varsayılan gelişim alanlarını sona ekler. */
+function mergeFocusAreas(stored: string[] | undefined, defaults: string[]): string[] {
+  const list = stored ?? defaults;
+  const seen = new Set(list);
+  const missing = defaults.filter((item) => !seen.has(item));
+  return [...list, ...missing];
+}
+
 export function normalizeContent(data: SiteContent): SiteContent {
   const tagline =
     !data.personal?.tagline || data.personal.tagline === LEGACY_TAGLINE
@@ -62,8 +70,10 @@ export function normalizeContent(data: SiteContent): SiteContent {
         },
         technologies:
           data.personal?.about?.technologies ?? defaultContent.personal.about.technologies,
-        focusAreas:
-          data.personal?.about?.focusAreas ?? defaultContent.personal.about.focusAreas,
+        focusAreas: mergeFocusAreas(
+          data.personal?.about?.focusAreas,
+          defaultContent.personal.about.focusAreas,
+        ),
         extras: data.personal?.about?.extras ?? [],
       },
     },

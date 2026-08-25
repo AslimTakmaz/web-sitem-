@@ -35,9 +35,11 @@ export const defaultContent: SiteContent = {
       ],
       focusAreas: [
         "Web Geliştirme",
+        "Mobil Uygulama Geliştirme",
         "Proje Geliştirme",
         "Yapay Zekâ Destekli Geliştirme",
         "UI/UX Tasarımı",
+        "React Native & Expo",
       ],
       education: {
         title: "11. Sınıf Bilişim Teknologileri Öğrencisi",
