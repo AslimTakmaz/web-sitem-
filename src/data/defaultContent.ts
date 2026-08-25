@@ -102,7 +102,6 @@ export const defaultContent: SiteContent = {
         "Deezer ve YouTube entegrasyonu",
         "Sınırsız oyun modu",
       ],
-      imageUrl: "/projects/sureli-tahmin.svg",
       published: true,
       links: {},
     },

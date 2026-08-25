@@ -22,7 +22,16 @@ function mergeProjects(stored: Project[] | undefined, defaults: Project[]): Proj
   const list = stored ?? defaults;
   const byId = new Map(list.map((p) => [p.id, p]));
   const defaultIds = new Set(defaults.map((p) => p.id));
-  const ordered = defaults.map((project) => byId.get(project.id) ?? project);
+  const ordered = defaults.map((project) => {
+    const storedProject = byId.get(project.id);
+    if (!storedProject) return project;
+    return {
+      ...project,
+      ...storedProject,
+      // Varsayılandaki görsel kararı geçerli (kaldırılan ikon Blob’da kalmasın)
+      imageUrl: project.imageUrl,
+    };
+  });
   const extras = list.filter((p) => !defaultIds.has(p.id));
   return [...ordered, ...extras].map((project) => ({
     ...project,
