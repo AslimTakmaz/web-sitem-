@@ -131,14 +131,6 @@ function ProjectCard({ project }: { project: Project }) {
           )}
         </div>
         <p className={styles.cardDescription}>{project.description}</p>
-        {project.id === "nazar-boncugu-app" && project.imageUrl?.trim() ? (
-          <img
-            className={styles.cardAccentImage}
-            src={project.imageUrl}
-            alt=""
-            loading="lazy"
-          />
-        ) : null}
 
         <ul className={styles.techList}>
           {project.technologies.map((tech) => (

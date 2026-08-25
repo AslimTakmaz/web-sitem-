@@ -120,7 +120,6 @@ export const defaultContent: SiteContent = {
         "Ses oynatma",
         "iOS ve Android desteği",
       ],
-      imageUrl: "/projects/nazar-boncugu.png",
       published: true,
       links: {},
     },

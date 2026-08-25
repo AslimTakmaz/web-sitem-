@@ -120,14 +120,6 @@
   overflow: hidden;
 }
 
-.cardAccentImage {
-  display: block;
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-  margin: 0 0 1rem;
-}
-
 .techList {
   display: flex;
   flex-wrap: wrap;
