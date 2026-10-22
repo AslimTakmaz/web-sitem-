@@ -18,18 +18,24 @@
     "generalExtras": [],
     "about": {
       "bio": "Teknoloji dünyasına Software Development Intern olarak adım atan ve sürekli öğrenmeye odaklanan bir yazılım geliştiriciyim. İlk projemi başarıyla tamamlayıp yayına aldıktan sonra, şu an kendimi daha da geliştirmek adına ikinci projem üzerinde aktif olarak çalışıyorum. Yeni teknolojileri öğrenmeye ve sektörel deneyim kazanmaya hazırım.",
-      "interest": "Yazılıma olan ilgimi projeler geliştirerek ilerletiyorum. Kodlama bilgim başlangıç seviyesinde olsa da, yapay zekâ destekli araçları kullanarak Stajyer Takip Paneli geliştirdim ve şu anda kendi portföy web sitem üzerinde çalışıyorum.",
+      "interest": "Yazılıma olan ilgimi web, mobil ve bilgisayar görüşü projeleriyle ilerletiyorum. Portföy sitem, stajyer takip paneli ve süreli şarkı tahmin oyununun yanında Hafız Karınca ile Nazar Boncuğu mobil uygulamalarını geliştirdim; Python ve YOLOv8 ile Akıllı Görüntü Analiz Sistemi üzerinde de çalışıyorum.",
       "technologies": [
         "Next.js",
         "React",
         "TypeScript",
+        "React Native",
+        "Expo",
         "Tailwind CSS",
+        "Python",
+        "OpenCV",
+        "YOLOv8",
         "Prisma",
         "SQLite"
       ],
       "focusAreas": [
         "Web Geliştirme",
         "Mobil Uygulama Geliştirme",
+        "Bilgisayar Görüşü",
         "Proje Geliştirme",
         "Yapay Zekâ Destekli Geliştirme",
         "UI/UX Tasarımı",
@@ -66,6 +72,45 @@
       "links": {
         "github": "https://github.com/AslimTakmaz/web-sitem-"
       }
+    },
+    {
+      "id": "hafiz-karinca",
+      "name": "Hafız Karınca",
+      "description": "Namaz vakitleri, kıble yönü ve ibadet içerikleri sunan Expo / React Native mobil uygulaması. Konum destekli günlük ibadet deneyimi için geliştirildi.",
+      "technologies": [
+        "React Native",
+        "Expo",
+        "TypeScript"
+      ],
+      "features": [
+        "Namaz vakitleri",
+        "Kıble yönü",
+        "İbadet içerikleri",
+        "Konum desteği",
+        "iOS ve Android desteği"
+      ],
+      "published": true,
+      "links": {}
+    },
+    {
+      "id": "akilli-goruntu-analiz",
+      "name": "Akıllı Görüntü Analiz Sistemi",
+      "description": "Hava ve sivil görüntüleri bilgisayar görüşü ile analiz eden Python prototipi. YOLOv8 ile nesne tespiti, canlı kamera analizi ve sonuç çıktısı üretir.",
+      "technologies": [
+        "Python",
+        "OpenCV",
+        "PyTorch",
+        "YOLOv8"
+      ],
+      "features": [
+        "YOLOv8 nesne tespiti",
+        "Canlı kamera analizi",
+        "Görüntü ön işleme",
+        "JSON ve annotated çıktı",
+        "Tehdit uyarı bandı"
+      ],
+      "published": true,
+      "links": {}
     },
     {
       "id": "stajyer-takip-paneli",

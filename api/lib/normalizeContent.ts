@@ -6,6 +6,8 @@ const LEGACY_TAGLINE =
   "Modern web teknolojileri kullanarak kullanıcı odaklı web uygulamaları geliştiriyorum.";
 const LEGACY_SEO_DESCRIPTION =
   "Aslım Takmaz — Software Development Intern. Modern web teknolojileri ile kullanıcı odaklı web uygulamaları geliştiriyorum.";
+const LEGACY_INTEREST =
+  "Yazılıma olan ilgimi projeler geliştirerek ilerletiyorum. Kodlama bilgim başlangıç seviyesinde olsa da, yapay zekâ destekli araçları kullanarak Stajyer Takip Paneli geliştirdim ve şu anda kendi portföy web sitem üzerinde çalışıyorum.";
 
 let cachedDefaults: SiteContent | null = null;
 
@@ -53,6 +55,10 @@ export function normalizeContent(data: SiteContent): SiteContent {
     !data.personal?.tagline || data.personal.tagline === LEGACY_TAGLINE
       ? defaults.personal.tagline
       : data.personal.tagline;
+  const interest =
+    !data.personal?.about?.interest || data.personal.about.interest === LEGACY_INTEREST
+      ? defaults.personal.about.interest
+      : data.personal.about.interest;
   const seoDescription =
     !data.seo?.description || data.seo.description === LEGACY_SEO_DESCRIPTION
       ? defaults.seo.description
@@ -77,12 +83,15 @@ export function normalizeContent(data: SiteContent): SiteContent {
       about: {
         ...defaults.personal.about,
         ...data.personal?.about,
+        interest,
         education: {
           ...defaults.personal.about.education,
           ...data.personal?.about?.education,
         },
-        technologies:
-          data.personal?.about?.technologies ?? defaults.personal.about.technologies,
+        technologies: mergeFocusAreas(
+          data.personal?.about?.technologies,
+          defaults.personal.about.technologies,
+        ),
         focusAreas: mergeFocusAreas(
           data.personal?.about?.focusAreas,
           defaults.personal.about.focusAreas,
